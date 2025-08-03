@@ -1,0 +1,240 @@
+﻿@model List<Care_Pulse.Models.Content>
+@{
+    ViewData["Title"] = "Posts";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0"><i class="fas fa-newspaper me-2"></i>Posts Management</h2>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createPostModal">
+            <i class="fas fa-plus me-2"></i>New Post
+        </button>
+    </div>
+
+    <!-- Create New Post Modal -->
+    <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createPostModalLabel">Create New Post</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="postForm" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="postTitle" class="form-label">Post Title</label>
+                            <input type="text" class="form-control" id="postTitle" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="postDescription" class="form-label">Post Content</label>
+                            <textarea class="form-control" id="postDescription" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="postImage" class="form-label">Post Image (Optional)</label>
+                            <input type="file" class="form-control" id="postImage" accept="image/*">
+                            <small class="text-muted">Maximum image size: 5MB</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="postFileUrl" class="form-label">External Image URL (Optional)</label>
+                            <input type="text" class="form-control" id="postFileUrl" placeholder="https://example.com/image.jpg">
+                            <small class="text-muted">Use this field if the image is hosted elsewhere</small>
+                        </div>
+                        <div class="mb-3" id="imagePreviewContainer" style="display:none;">
+                            <label class="form-label">Image Preview</label>
+                            <div>
+                                <img id="imagePreview" src="#" alt="Image Preview" class="img-thumbnail" style="max-height: 200px;">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="submitPost">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Title</th>
+                            <th>Image</th>
+                            <th>Type</th>
+                            <th>Publish Date</th>
+                            <th>Author</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var post in Model)
+                        {
+                            <tr>
+                                <td>@post.Title</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(post.FileUrl))
+                                    {
+                                        <img src="@post.FileUrl" alt="Post Image" class="img-thumbnail" style="max-height: 60px; max-width: 100px;">
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">No Image</span>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">@post.ContentType</span>
+                                </td>
+                                <td>@post.CreatedAt.ToString("yyyy/MM/dd")</td>
+                                <td>
+                                    @(post.UploadedBy?.Name ?? "Unknown")
+                                </td>
+                                <td>
+                                    @if (post.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Inactive</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="#" class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-danger"
+                                                onclick="confirmDelete(@post.Id)" title="Delete">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info text-center py-4">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h4>No Posts Available</h4>
+                    <p class="mb-0">You can create a new post by clicking the "New Post" button</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Show image preview when file is selected
+            $('#postImage').change(function() {
+                if (this.files && this.files[0]) {
+                    var fileSize = this.files[0].size / 1024 / 1024; // File size in MB
+                    if (fileSize > 5) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Image Too Large',
+                            text: 'Maximum image size is 5MB'
+                        });
+                        $(this).val('');
+                        return;
+                    }
+
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#imagePreview').attr('src', e.target.result);
+                        $('#imagePreviewContainer').show();
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                } else {
+                    $('#imagePreviewContainer').hide();
+                }
+            });
+
+            // Submit form via API
+            $('#submitPost').click(function() {
+                const formData = new FormData();
+                formData.append('Title', $('#postTitle').val());
+                formData.append('Description', $('#postDescription').val());
+                formData.append('FileUrl', $('#postFileUrl').val());
+
+                const imageFile = $('#postImage')[0].files[0];
+                if (imageFile) {
+                    formData.append('ImageFile', imageFile);
+                }
+
+                $.ajax({
+                    url: '/Admin/Posts',
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success',
+                                text: response.message,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                $('#createPostModal').modal('hide');
+                                location.reload();
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        const error = xhr.responseJSON;
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: error?.message || 'An error occurred while creating the post'
+                        });
+                    }
+                });
+            });
+
+            function confirmDelete(postId) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.post('/Admin/DeletePost', { id: postId }, function(response) {
+                            if (response.success) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'The post has been deleted.',
+                                    'success'
+                                ).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    response.message || 'An error occurred while deleting',
+                                    'error'
+                                );
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    </script>
+}

@@ -1,0 +1,202 @@
+﻿@model Care_Pulse.Models.User
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Create New Account";
+}
+
+<style>
+    .auth-container {
+        width: 100%;
+        max-width: 500px;
+        padding: 2rem;
+        margin: 2rem auto;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .auth-form {
+        background: rgba(255, 255, 255, 0.97);
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+        .auth-form h2 {
+            color: var(--dark);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            font-size: 1.8rem;
+            position: relative;
+        }
+
+            .auth-form h2:after {
+                content: '';
+                display: block;
+                width: 60px;
+                height: 4px;
+                background: linear-gradient(to right, var(--primary), var(--secondary));
+                margin: 15px auto;
+                border-radius: 2px;
+            }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+    .input-with-icon {
+        position: relative;
+    }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            z-index: 2;
+        }
+
+        .input-with-icon input,
+        .input-with-icon select {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+            .input-with-icon input:focus,
+            .input-with-icon select:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.2);
+                outline: none;
+            }
+
+    select.form-control {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300b894'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 15px center;
+        background-size: 15px;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        border: none;
+        padding: 14px;
+        width: 100%;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        margin-top: 1rem;
+    }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 184, 148, 0.3);
+        }
+
+    .auth-links {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: var(--dark);
+    }
+
+        .auth-links a {
+            color: var(--secondary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+            .auth-links a:hover {
+                text-decoration: underline;
+            }
+
+    .text-danger {
+        color: var(--error);
+        font-size: 0.85rem;
+        margin-top: 5px;
+        display: block;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-form">
+        <h2>Create New Account</h2>
+
+        <form asp-action="Register" method="post">
+            <div class="form-group">
+                <label asp-for="Name">Full Name</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-user"></i>
+                    <input asp-for="Name" class="form-control" required />
+                </div>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">Email</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input asp-for="Email" type="email" class="form-control" required />
+                </div>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="PasswordHash">Password</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-lock"></i>
+                    <input asp-for="PasswordHash" type="password" class="form-control" required />
+                </div>
+                <span asp-validation-for="PasswordHash" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Gender">Gender</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-venus-mars"></i>
+                    <select asp-for="Gender" class="form-control">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Create Account</button>
+        </form>
+
+        <div class="auth-links">
+            Already have an account? <a asp-action="Login">Login here</a>
+        </div>
+    </div>
+</div>

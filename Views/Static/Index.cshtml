@@ -1,0 +1,72 @@
+﻿@{
+    ViewData["Title"] = "الصفحة الرئيسية";
+    Layout = "_Layout";
+}
+
+<div class="static-home">
+    <div class="hero-section text-center py-5">
+        <div class="container">
+            <h1 class="display-4 mb-4">مرحبًا بكم في CarePulse</h1>
+            <p class="lead">منصة متكاملة للرعاية الصحية والمعلومات الطبية الموثوقة</p>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center py-4">
+                        <i class="fas fa-book-medical fa-3x mb-3 text-primary"></i>
+                        <h3 class="card-title">المقالات الطبية</h3>
+                        <p class="card-text">أحدث الأبحاث والنصائح الطبية من متخصصين</p>
+                        <a asp-action="Articles" class="btn btn-primary px-4">استكشف</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center py-4">
+                        <i class="fas fa-info-circle fa-3x mb-3 text-success"></i>
+                        <h3 class="card-title">من نحن</h3>
+                        <p class="card-text">تعرف على فريقنا ورسالتنا ورؤيتنا</p>
+                        <a asp-action="About" class="btn btn-success px-4">المزيد</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center py-4">
+                        <i class="fas fa-envelope fa-3x mb-3 text-info"></i>
+                        <h3 class="card-title">اتصل بنا</h3>
+                        <p class="card-text">نحن هنا للإجابة على استفساراتكم</p>
+                        <a asp-action="Contact" class="btn btn-info px-4">تواصل</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .static-home {
+        min-height: calc(100vh - 150px);
+    }
+
+    .hero-section {
+        background: linear-gradient(135deg, rgba(0, 184, 148, 0.9), rgba(9, 132, 227, 0.9));
+        color: white;
+        margin-bottom: 3rem;
+    }
+
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        border-radius: 10px;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+        }
+</style>

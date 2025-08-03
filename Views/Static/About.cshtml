@@ -1,0 +1,95 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewData["Title"] = "من نحن";
+    Layout = "_Layout";
+}
+
+<div class="about-page">
+    <div class="about-hero text-center py-5 text-white">
+        <div class="container py-4">
+            <h1 class="display-4 mb-3"><i class="fas fa-info-circle me-2"></i>من نحن</h1>
+            <p class="lead mb-0">رسالتنا، رؤيتنا، وقيمنا</p>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row align-items-center mb-5">
+            <div class="col-lg-6">
+                <h2 class="mb-4">رسالتنا</h2>
+                <p class="lead">تقديم رعاية صحية شاملة ومعلومات طبية موثوقة للجميع</p>
+                <p>نحن نؤمن بأن الوصول إلى المعلومات الصحية الصحيحة يجب أن يكون حقاً للجميع. نسعى جاهدين لتقديم محتوى طبي دقيق وسهل الفهم، مع التركيز على الجودة والمصداقية.</p>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="img-fluid rounded shadow" alt="رسالتنا">
+            </div>
+        </div>
+
+        <div class="row align-items-center mb-5 flex-lg-row-reverse">
+            <div class="col-lg-6">
+                <h2 class="mb-4">رؤيتنا</h2>
+                <p class="lead">أن نكون المنصة الرائدة في الرعاية الصحية الإلكترونية بالمنطقة</p>
+                <p>نطمح إلى إنشاء مجتمع صحي واعي، حيث يمكن للأفراد الوصول بسهولة إلى المعلومات الطبية الموثوقة، والاستشارات المتخصصة، وخدمات الرعاية الصحية المبتكرة.</p>
+            </div>
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="img-fluid rounded shadow" alt="رؤيتنا">
+            </div>
+        </div>
+
+        <div class="team-section text-center py-4">
+            <h2 class="mb-5">فريقنا</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="team-card p-4 rounded shadow-sm">
+                        <img src="https://randomuser.me/api/portraits/women/65.jpg" class="rounded-circle mb-3" width="120" alt="د. سارة">
+                        <h4>د. سارة عبدالله</h4>
+                        <p class="text-muted">أخصائية قلب وأوعية دموية</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="team-card p-4 rounded shadow-sm">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="rounded-circle mb-3" width="120" alt="د. أحمد">
+                        <h4>د. أحمد محمد</h4>
+                        <p class="text-muted">أخصائي تغذية علاجية</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="team-card p-4 rounded shadow-sm">
+                        <img src="https://randomuser.me/api/portraits/women/44.jpg" class="rounded-circle mb-3" width="120" alt="د. نورا">
+                        <h4>د. نورا سعيد</h4>
+                        <p class="text-muted">أخصائية صحة نفسية</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .about-page {
+        min-height: calc(100vh - 150px);
+    }
+
+    .about-hero {
+        background: linear-gradient(135deg, rgba(0, 184, 148, 0.9), rgba(9, 132, 227, 0.9));
+        margin-bottom: 3rem;
+        border-radius: 0 0 20px 20px;
+    }
+
+    .team-card {
+        transition: transform 0.3s;
+        background: white;
+    }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .team-card img {
+            border: 3px solid var(--primary);
+        }
+</style>

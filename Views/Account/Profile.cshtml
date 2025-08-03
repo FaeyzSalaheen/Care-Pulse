@@ -1,0 +1,135 @@
+﻿@model Care_Pulse.Models.User
+
+@{
+    ViewData["Title"] = "الملف الشخصي";
+    Layout = "_Layout";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title">تعديل الملف الشخصي</h3>
+                </div>
+
+                <div class="card-body">
+                    <form asp-action="UpdateProfile" method="post" enctype="multipart/form-data" id="profileForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="Id" />
+
+                        <!-- Profile Picture -->
+                        <div class="text-center mb-4">
+                            @if (!string.IsNullOrEmpty(Model.Image))
+                            {
+                                <img src="@Model.Image" class="rounded-circle" width="150" height="150" alt="صورة الملف الشخصي" id="profileImage" />
+                            }
+                            else
+                            {
+                                <div class="rounded-circle bg-light d-inline-block" style="width: 150px; height: 150px; line-height: 150px;">
+                                    <i class="fas fa-user text-secondary" style="font-size: 50px;"></i>
+                                </div>
+                            }
+                            <div class="mt-3">
+                                <label class="btn btn-outline-primary">
+                                    تغيير الصورة <input type="file" name="imageFile" accept="image/*" style="display: none;" id="imageUpload">
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Personal Info -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Name" class="control-label">الاسم الكامل</label>
+                                    <input asp-for="Name" class="form-control" id="nameField" />
+                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Email" class="control-label">البريد الإلكتروني</label>
+                                    <input asp-for="Email" class="form-control" id="emailField" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Bio" class="control-label">نبذة عني</label>
+                            <textarea asp-for="Bio" class="form-control" rows="3" id="bioField"></textarea>
+                            <span asp-validation-for="Bio" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group text-center mt-4">
+                            <button type="submit" class="btn btn-primary px-4" id="saveBtn">
+                                <i class="fas fa-save me-2"></i>حفظ التعديلات
+                            </button>
+                            <a asp-action="ChangePassword" class="btn btn-outline-secondary mx-2">
+                                <i class="fas fa-key me-2"></i>تغيير كلمة المرور
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function() {
+            // Display success notification from TempData
+        @if (TempData["ToastMessage"] != null)
+        {
+            <text>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'تم بنجاح!',
+                        text: '@TempData["ToastMessage"]',
+                        confirmButtonText: 'حسناً',
+                        timer: 3000,
+                        timerProgressBar: true,
+                        rtl: true
+                    });
+            </text>
+        }
+
+            // Preview image before upload
+            $('#imageUpload').change(function(e) {
+                if (this.files && this.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        $('#profileImage').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            // Form submission handler
+            $('#profileForm').submit(function() {
+                $('#saveBtn').prop('disabled', true);
+                $('#saveBtn').html('<i class="fas fa-spinner fa-spin me-2"></i>جاري الحفظ...');
+            });
+
+            // Clear form fields after successful submission
+        @if (ViewBag.FormReset == true)
+        {
+            <text>
+                    $(function() {
+                        $('#profileForm')[0].reset();
+                        // Keep the profile image if it exists
+                @if (!string.IsNullOrEmpty(Model.Image))
+                {
+                    <text>$('#profileImage').attr('src', '@Model.Image');</text>
+                }
+                    });
+            </text>
+        }
+        });
+    </script>
+}

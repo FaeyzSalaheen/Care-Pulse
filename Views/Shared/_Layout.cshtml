@@ -1,0 +1,410 @@
+﻿<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CarePulse</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00b894;
+            --secondary: #0984e3;
+            --accent: #fd79a8;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --error: #e74c3c;
+            --glass: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--light);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+        }
+
+            .logo:hover {
+                transform: scale(1.05);
+            }
+
+            .logo i {
+                color: var(--accent);
+                font-size: 1.8rem;
+            }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+            .nav-link:hover {
+                color: var(--accent);
+                transform: translateY(-2px);
+            }
+
+            .nav-link i {
+                font-size: 1.1rem;
+            }
+
+        .user-greeting {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+
+            .user-greeting i {
+                color: var(--accent);
+            }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+
+        .session-debug {
+            background: rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            margin: 0.5rem;
+            display: none;
+        }
+
+        .toast-medical {
+            font-family: 'Tajawal', sans-serif !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+            border-right: 5px solid transparent !important;
+        }
+
+            .toast-medical .toast-close-button {
+                color: white !important;
+                font-weight: normal !important;
+                font-size: 1.2rem !important;
+            }
+
+            .toast-medical .toast-title {
+                font-weight: 700 !important;
+                font-size: 16px !important;
+                margin-bottom: 5px !important;
+            }
+
+            .toast-medical .toast-message {
+                font-size: 14px !important;
+                line-height: 1.5 !important;
+            }
+
+        .toast-info {
+            background-color: var(--secondary) !important;
+            border-right-color: var(--primary) !important;
+        }
+
+        .toast-success {
+            background-color: #27ae60 !important;
+            border-right-color: #2ecc71 !important;
+        }
+
+        .toast-error {
+            background-color: var(--error) !important;
+            border-right-color: #c0392b !important;
+        }
+
+        .toast-warning {
+            background-color: #f39c12 !important;
+            border-right-color: #e67e22 !important;
+        }
+
+        #toast-container > .toast-medical:before {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        #toast-container > .toast-info:before {
+            content: "\f05a";
+        }
+
+        #toast-container > .toast-success:before {
+            content: "\f058";
+        }
+
+        #toast-container > .toast-error:before {
+            content: "\f06a";
+        }
+
+        #toast-container > .toast-warning:before {
+            content: "\f071";
+        }
+
+        #toast-container > div {
+            padding: 15px 15px 15px 60px !important;
+            width: auto !important;
+            opacity: 1 !important;
+        }
+
+        @@media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem 0;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logo {
+                font-size: 1.3rem;
+            }
+
+            #toast-container {
+                width: 90% !important;
+                left: 5% !important;
+                right: auto !important;
+            }
+
+                #toast-container > div {
+                    width: 100% !important;
+                }
+        }
+    </style>
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>CarePulse</span>
+            </a>
+
+            <div class="session-debug">
+                UserId: @Context.Session.GetInt32("UserId") |
+                Role: @Context.Session.GetInt32("UserRole") |
+                Name: @Context.Session.GetString("UserName")
+            </div>
+
+            <div class="nav-links">
+                @{
+                    var userId = Context.Session.GetInt32("UserId");
+                    var userRole = Context.Session.GetInt32("UserRole");
+                }
+
+                @if (userId != null)
+                {
+                    <span class="user-greeting">
+                        <i class="fas fa-user"></i>
+                        @Context.Session.GetString("UserName")
+                    </span>
+
+                    <a class="nav-link" asp-controller="Chat" asp-action="Index">
+                        <i class="fas fa-comments"></i>
+                        <span class="link-text">Chat with Doctor</span>
+                    </a>
+
+                    <a class="nav-link" asp-controller="Content" asp-action="ViewPosts">
+                        <i class="fas fa-newspaper"></i>
+                        <span class="link-text">Posts</span>
+                    </a>
+                    <a class="nav-link" asp-controller="Static" asp-action="ExerciseByMuscle">
+                        <i class="fas fa-dumbbell"></i>
+                        <span class="link-text">Therapeutic Exercises</span>
+                    </a>
+                    <a class="nav-link" asp-controller="Account" asp-action="Profile">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="link-text">الملف الشخصي</span>
+                    </a>
+
+                    <a class="nav-link" asp-controller="Static" asp-action="Index">
+                        <i class="fas fa-book-open"></i>
+                        <span class="link-text">Articles</span>
+                    </a>
+
+                    <a class="nav-link" asp-controller="Account" asp-action="Logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="link-text">Logout</span>
+                    </a>
+                }
+                else
+                {
+                    <a class="nav-link" asp-controller="Account" asp-action="Login">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span class="link-text">Login</span>
+                    </a>
+
+                    <a class="nav-link" asp-controller="Account" asp-action="Register">
+                        <i class="fas fa-user-plus"></i>
+                        <span class="link-text">Register</span>
+                    </a>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer>
+        &copy; @DateTime.Now.Year - CarePulse | Integrated Healthcare System
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-left",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut",
+            "rtl": true,
+            "tapToDismiss": false,
+            "toastClass": "toast-medical"
+        };
+
+        function showMedicalToast(type, message, title) {
+            switch (type) {
+                case 'success':
+                    toastr.success(message, title);
+                    break;
+                case 'error':
+                    toastr.error(message, title);
+                    break;
+                case 'warning':
+                    toastr.warning(message, title);
+                    break;
+                case 'info':
+                default:
+                    toastr.info(message, title);
+            }
+        }
+
+            console.log('Session Info:', {
+                userId: '@Context.Session.GetInt32("UserId")',
+                userRole: '@Context.Session.GetInt32("UserRole")',
+                userName: '@Context.Session.GetString("UserName")'
+            });
+        });
+    </script>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js';
+        import { getDatabase } from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js';
+        import { getAuth } from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCgrn9MIAa3J6TL-KW_gWbmMw3hz_qL7t0",
+            authDomain: "doctor-chat-app-5df92.firebaseapp.com",
+            databaseURL: "https://doctor-chat-app-5df92-default-rtdb.firebaseio.com",
+            projectId: "doctor-chat-app-5df92",
+            storageBucket: "doctor-chat-app-5df92.appspot.com",
+            messagingSenderId: "319942931151",
+            appId: "1:319942931151:web:92ce7433148765adf63dba",
+            measurementId: "G-R5PMNV2LB3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const auth = getAuth(app);
+
+        window.firebaseApp = app;
+        window.firebaseDatabase = database;
+        window.firebaseAuth = auth;
+    </script>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

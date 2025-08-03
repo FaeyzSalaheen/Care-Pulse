@@ -1,0 +1,249 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Home - CarePulse";
+}
+
+@section Styles {
+    <style>
+        /* Custom styles */
+        .hero-section {
+            background: linear-gradient(135deg, rgba(0, 184, 148, 0.8), rgba(9, 132, 227, 0.8));
+            padding: 4rem 2rem;
+            border-radius: 15px;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+            .hero-section::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+                opacity: 0.15;
+                z-index: 0;
+            }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+            .feature-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #00b894;
+            margin-bottom: 1.5rem;
+            background: rgba(0, 184, 148, 0.1);
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .welcome-section {
+            background: #f8f9fa;
+            padding: 3rem;
+            border-radius: 15px;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .testimonials {
+            margin: 4rem 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border-radius: 15px;
+        }
+
+        .doctor-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #00b894;
+            margin: 0 auto 1rem;
+        }
+
+        .btn-custom {
+            background: #00b894;
+            color: white;
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+        }
+
+            .btn-custom:hover {
+                background: #0984e3;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+                color: white;
+            }
+    </style>
+}
+
+<!-- Main Hero Section -->
+<div class="hero-section">
+    <div class="hero-content">
+        <h1 class="display-4 fw-bold mb-4">Welcome to CarePulse</h1>
+        <p class="lead fs-3 mb-4">The integrated healthcare system that puts your health first</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="#" class="btn btn-custom btn-lg">Start Your Health Journey</a>
+            <a href="#" class="btn btn-outline-light btn-lg">Learn More</a>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Our Featured Services</h2>
+        <p class="text-muted">We provide comprehensive healthcare solutions with high quality</p>
+    </div>
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-comments"></i>
+            </div>
+            <h3>Chat with Doctors</h3>
+            <p class="text-muted">Direct communication with medical specialists for instant and accurate consultations.</p>
+            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" class="img-fluid rounded mt-3" alt="Medical chat">
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-newspaper"></i>
+            </div>
+            <h3>Latest Articles</h3>
+            <p class="text-muted">Access the latest medical articles and advice from our specialized professional team.</p>
+            <img src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" class="img-fluid rounded mt-3" alt="Medical articles">
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <h3>Medical Library</h3>
+            <p class="text-muted">Comprehensive resources of reliable and regularly updated medical information.</p>
+            <img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80" class="img-fluid rounded mt-3" alt="Medical library">
+        </div>
+    </div>
+</div>
+
+<!-- Welcome Section -->
+<div class="container welcome-section">
+    <div class="row align-items-center">
+        <div class="col-md-6">
+            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" class="img-fluid rounded" alt="CarePulse team">
+        </div>
+        <div class="col-md-6 mt-4 mt-md-0">
+            <h2 class="fw-bold mb-4">Why Choose CarePulse?</h2>
+            <p class="lead">We provide comprehensive healthcare from prevention to treatment, with a highly skilled and specialized medical team.</p>
+            <ul class="list-unstyled">
+                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> 24/7 medical consultations</li>
+                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Reliable medical information</li>
+                <li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i> Continuous health monitoring</li>
+                <li><i class="fas fa-check-circle text-success me-2"></i> Privacy and security of your data</li>
+            </ul>
+            <a href="#" class="btn btn-custom mt-3">Join Us Now</a>
+        </div>
+    </div>
+</div>
+
+<!-- Testimonials Section -->
+<div class="container testimonials">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Client Testimonials</h2>
+        <p class="text-muted">What they say about our services</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 text-center mb-4">
+            <img src="https://randomuser.me/api/portraits/women/32.jpg" class="doctor-img" alt="Dr. Sarah">
+            <h4 class="mt-3">Dr. Sarah</h4>
+            <p class="text-muted">Cardiologist</p>
+            <p>"CarePulse has completely transformed healthcare delivery"</p>
+            <div class="text-warning">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+            </div>
+        </div>
+
+        <div class="col-md-4 text-center mb-4">
+            <img src="https://randomuser.me/api/portraits/men/45.jpg" class="doctor-img" alt="Dr. Ahmed">
+            <h4 class="mt-3">Dr. Ahmed</h4>
+            <p class="text-muted">Nutrition Specialist</p>
+            <p>"An integrated platform that provides everything patients and doctors need"</p>
+            <div class="text-warning">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+            </div>
+        </div>
+
+        <div class="col-md-4 text-center mb-4">
+            <img src="https://randomuser.me/api/portraits/women/68.jpg" class="doctor-img" alt="Dr. Layla">
+            <h4 class="mt-3">Dr. Layla</h4>
+            <p class="text-muted">Psychologist</p>
+            <p>"The best experience for patients needing continuous follow-up"</p>
+            <div class="text-warning">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="far fa-star"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simple scroll effects
+            const featureCards = document.querySelectorAll('.feature-card');
+
+            featureCards.forEach((card, index) => {
+                card.style.transitionDelay = `${index * 100}ms`;
+            });
+
+            console.log('Home page loaded successfully');
+        });
+    </script>
+}

@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - CarePulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/site.css" />
+    <style>
+        :root {
+            --primary: #00b894;
+            --secondary: #0984e3;
+            --accent: #fd79a8;
+            --dark: #2d3436;
+            --light: #dfe6e9;
+            --error: #e74c3c;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            nav a, nav span {
+                color: white;
+                text-decoration: none;
+                margin-left: 1.5rem;
+                font-weight: 500;
+                transition: all 0.3s;
+            }
+
+                nav a:hover {
+                    opacity: 0.8;
+                    text-decoration: underline;
+                }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            margin-top: auto;
+        }
+    </style>
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <header>
+        <nav>
+            @if (Context.Session.GetInt32("UserId") != null)
+            {
+                <div>
+                    <span>مرحباً @Context.Session.GetString("UserName")</span>
+                    <a asp-controller="Account" asp-action="Logout">
+                        <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div>
+                    <a asp-controller="Account" asp-action="Login">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </a>
+                    <a asp-controller="Account" asp-action="Register">
+                        <i class="fas fa-user-plus"></i> إنشاء حساب
+                    </a>
+                </div>
+            }
+        </nav>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer>
+        &copy; @DateTime.Now.Year - CarePulse
+    </footer>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

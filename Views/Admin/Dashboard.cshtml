@@ -1,0 +1,210 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_AdminLayout";
+}
+
+@section Styles {
+    <style>
+        :root {
+            --primary: #00b894;
+            --secondary: #0984e3;
+            --accent: #fd79a8;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --glass: rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-content {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+            .admin-content h2 {
+                color: var(--dark);
+                font-size: 2rem;
+                margin-bottom: 2rem;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+
+                .admin-content h2 i {
+                    color: var(--primary);
+                }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .stat-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            }
+
+            .stat-card:nth-child(2) {
+                border-left-color: var(--secondary);
+            }
+
+            .stat-card:nth-child(3) {
+                border-left-color: var(--accent);
+            }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-card:nth-child(1) .stat-value {
+            color: var(--primary);
+        }
+
+        .stat-card:nth-child(2) .stat-value {
+            color: var(--secondary);
+        }
+
+        .stat-card:nth-child(3) .stat-value {
+            color: var(--accent);
+        }
+
+        .stat-card div:last-child {
+            color: var(--dark);
+            font-size: 1.1rem;
+            opacity: 0.8;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(0, 184, 148, 0.1);
+            z-index: 1;
+        }
+
+        .stat-card:nth-child(2)::before {
+            background: rgba(9, 132, 227, 0.1);
+        }
+
+        .stat-card:nth-child(3)::before {
+            background: rgba(253, 121, 168, 0.1);
+        }
+
+        /* Additional sections */
+        .dashboard-sections {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        .section-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+            .section-title i {
+                color: var(--primary);
+            }
+
+        /* Responsive design */
+        @@media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-content {
+                padding: 1rem;
+            }
+
+                .admin-content h2 {
+                    font-size: 1.5rem;
+                }
+        }
+    </style>
+}
+
+<div class="admin-content">
+    <h2><i class="fas fa-tachometer-alt"></i> Dashboard</h2>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">24</div>
+            <div>Today's Appointments</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">8</div>
+            <div>New Messages</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">15</div>
+            <div>This Week's Consultations</div>
+        </div>
+    </div>
+
+    <div class="dashboard-sections">
+        <div class="section-card">
+            <h3 class="section-title"><i class="fas fa-calendar-alt"></i> Upcoming Appointments</h3>
+            <!-- Appointments content -->
+        </div>
+
+        <div class="section-card">
+            <h3 class="section-title"><i class="fas fa-envelope"></i> Recent Messages</h3>
+            <!-- Messages content -->
+        </div>
+
+        <div class="section-card">
+            <h3 class="section-title"><i class="fas fa-chart-line"></i> Quick Statistics</h3>
+            <!-- Statistics content -->
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // You can add interactive scripts here
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animation effects when page loads
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, index) => {
+                card.style.animation = `fadeInUp 0.5s ease ${index * 0.2}s forwards`;
+                card.style.opacity = '0';
+            });
+        });
+    </script>
+}
