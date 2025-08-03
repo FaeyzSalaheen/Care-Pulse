@@ -1,15 +1,19 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Care_Pulse.Models;
-
+[Index(nameof(Email), IsUnique = true)]
 public partial class User
 {
     public int Id { get; set; }
 
     public string Name { get; set; } = null!;
 
-    public string Email { get; set; } = null!;
+    [Required]
+    [EmailAddress]
+    public string Email { get; set; }
 
     public string PasswordHash { get; set; } = null!;
 
@@ -37,3 +41,4 @@ public partial class User
 
     public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
 }
+

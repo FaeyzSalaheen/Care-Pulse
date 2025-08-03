@@ -4,6 +4,7 @@ using Care_Pulse.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Care_Pulse.Data.Migrations
 {
     [DbContext(typeof(CarePulseContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250803155728_FisrtMigration")]
+    partial class FisrtMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,9 +202,6 @@ namespace Care_Pulse.Data.Migrations
 
                     b.HasKey("Id")
                         .HasName("PK__users__3214EC074A6650BE");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.ToTable("users", (string)null);
                 });
