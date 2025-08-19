@@ -1,7 +1,10 @@
 ﻿using Care_Pulse.Data;
 using Care_Pulse.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.Metrics;
+using System;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Care_Pulse.Controllers
 {

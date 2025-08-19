@@ -1,0 +1,667 @@
+﻿@{
+    ViewData["Title"] = "Nutrition";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nutrition - CarePulse</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #00b894;
+            --secondary: #0984e3;
+            --accent: #fd79a8;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --error: #e74c3c;
+            --glass: rgba(255, 255, 255, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+        }
+
+            .logo:hover {
+                transform: scale(1.05);
+            }
+
+            .logo i {
+                color: var(--accent);
+                font-size: 1.8rem;
+            }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+            .nav-link:hover {
+                color: var(--accent);
+                transform: translateY(-2px);
+            }
+
+            .nav-link i {
+                font-size: 1.1rem;
+            }
+
+        .user-greeting {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+        }
+
+            .user-greeting i {
+                color: var(--accent);
+            }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: auto;
+            font-size: 0.9rem;
+        }
+
+        .session-debug {
+            background: rgba(0,0,0,0.1);
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            margin: 0.5rem;
+            display: none;
+        }
+
+        .toast-medical {
+            font-family: 'Tajawal', sans-serif !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+            border-right: 5px solid transparent !important;
+        }
+
+            .toast-medical .toast-close-button {
+                color: white !important;
+                font-weight: normal !important;
+                font-size: 1.2rem !important;
+            }
+
+            .toast-medical .toast-title {
+                font-weight: 700 !important;
+                font-size: 16px !important;
+                margin-bottom: 5px !important;
+            }
+
+            .toast-medical .toast-message {
+                font-size: 14px !important;
+                line-height: 1.5 !important;
+            }
+
+        .toast-info {
+            background-color: var(--secondary) !important;
+            border-right-color: var(--primary) !important;
+        }
+
+        .toast-success {
+            background-color: #27ae60 !important;
+            border-right-color: #2ecc71 !important;
+        }
+
+        .toast-error {
+            background-color: var(--error) !important;
+            border-right-color: #c0392b !important;
+        }
+
+        .toast-warning {
+            background-color: #f39c12 !important;
+            border-right-color: #e67e22 !important;
+        }
+
+        #toast-container > .toast-medical:before {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        #toast-container > .toast-info:before {
+            content: "\f05a";
+        }
+
+        #toast-container > .toast-success:before {
+            content: "\f058";
+        }
+
+        #toast-container > .toast-error:before {
+            content: "\f06a";
+        }
+
+        #toast-container > .toast-warning:before {
+            content: "\f071";
+        }
+
+        #toast-container > div {
+            padding: 15px 15px 15px 60px !important;
+            width: auto !important;
+            opacity: 1 !important;
+        }
+
+        /* Nutrition page design */
+        .glass-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin: 30px auto;
+            padding: 30px;
+            max-width: 1100px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        }
+
+        .nutrition-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .condition-buttons {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+            .condition-buttons button {
+                background-color: rgba(255, 255, 255, 0.7);
+                border: none;
+                padding: 12px 24px;
+                margin: 8px;
+                font-size: 16px;
+                border-radius: 12px;
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+                .condition-buttons button:hover {
+                    background-color: #d2f4ff;
+                }
+
+        .meal-section {
+            display: none;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-top: 30px;
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .meal-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px;
+            width: 300px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+            .meal-card:hover {
+                transform: scale(1.05);
+            }
+
+            .meal-card img {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                object-fit: cover;
+                display: block;
+                margin: 0 auto 10px;
+            }
+
+        .chart-section {
+            margin: 40px auto;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 16px;
+            max-width: 400px;
+            display: none;
+        }
+
+        .snack-advice {
+            margin-top: 30px;
+            background: rgba(255,255,255,0.8);
+            padding: 20px;
+            border-left: 6px solid #43cea2;
+            border-radius: 12px;
+            font-size: 18px;
+        }
+
+        /* Fixed keyframes */
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 1rem 0;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .logo {
+                font-size: 1.3rem;
+            }
+
+            #toast-container {
+                width: 90% !important;
+                left: 5% !important;
+                right: auto !important;
+            }
+
+                #toast-container > div {
+                    width: 100% !important;
+                }
+
+            .glass-container {
+                padding: 15px;
+                margin: 15px;
+            }
+
+            .condition-buttons button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .meal-card {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/" class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>CarePulse</span>
+            </a>
+
+            <div class="session-debug">
+                UserId: 123 | Role: 1 | Name: John Doe
+            </div>
+
+            <div class="nav-links">
+                <span class="user-greeting">
+                    <i class="fas fa-user"></i>
+                    John Doe
+                </span>
+
+                <a class="nav-link" href="#" id="nutritionLink">
+                    <i class="fas fa-apple-alt"></i>
+                    <span class="link-text">Nutrition</span>
+                </a>
+
+                <a class="nav-link" href="#">
+                    <i class="fas fa-comments"></i>
+                    <span class="link-text">Chat with Doctor</span>
+                </a>
+
+                <a class="nav-link" href="#">
+                    <i class="fas fa-newspaper"></i>
+                    <span class="link-text">Posts</span>
+                </a>
+                <a class="nav-link" href="#">
+                    <i class="fas fa-dumbbell"></i>
+                    <span class="link-text">Therapeutic Exercises</span>
+                </a>
+                <a class="nav-link" href="#">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="link-text">Profile</span>
+                </a>
+
+                <a class="nav-link" href="#">
+                    <i class="fas fa-book-open"></i>
+                    <span class="link-text">Articles</span>
+                </a>
+
+                <a class="nav-link" href="#">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="link-text">Logout</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="glass-container">
+            <div style="text-align:center; margin-bottom: 20px;">
+                <img src="https://via.placeholder.com/160x60/43cea2/ffffff?text=CarePulse" alt="Care Pulse Logo" style="width:160px; height:auto;">
+            </div>
+
+            <h1 class="nutrition-title">Smart Nutrition Guidance</h1>
+            <p style="text-align:center; color: white;">Personalized recommendations based on your health condition</p>
+
+            <div class="condition-buttons">
+                <button onclick="showMeals('diabetic')">Diabetic</button>
+                <button onclick="showMeals('hypertension')">Hypertension</button>
+                <button onclick="showMeals('cholesterol')">Cholesterol</button>
+                <button onclick="showMeals('wellness')">Wellness</button>
+            </div>
+
+            <!-- Meal content -->
+            <div id="mealsContainer" class="meal-section"></div>
+
+            <div class="chart-section" id="chartSection">
+                <h2>Nutrition Breakdown</h2>
+                <canvas id="nutritionChart" width="300" height="300"></canvas>
+            </div>
+
+            <div class="snack-advice">
+                <h2>Healthy Snack Recommendations for Specific Conditions</h2>
+
+                <h3>1. High Cholesterol</h3>
+                <ul>
+                    <li>Choose fiber-rich and unsaturated fat snacks.</li>
+                    <li>Examples: raw almonds or walnuts (20–25g), fresh veggies with hummus, fresh fruits like apples or berries.</li>
+                    <li>Avoid fried or processed snacks and salted nuts.</li>
+                </ul>
+
+                <h3>2. Diabetes</h3>
+                <ul>
+                    <li>Opt for low-glycemic, high-fiber snacks.</li>
+                    <li>Examples: low-fat yogurt with chia seeds or nuts, fresh vegetables (carrots, celery) with light dip, fruits like apple or berries in controlled portions.</li>
+                    <li>Avoid sugary juices and desserts.</li>
+                </ul>
+
+                <h3>3. Hypertension</h3>
+                <ul>
+                    <li>Reduce salt intake and choose potassium-rich snacks.</li>
+                    <li>Examples: unsalted nuts (almonds, walnuts), fruits like banana or orange, fresh vegetables (cucumber, carrot).</li>
+                    <li>Avoid chips, processed, and salty snacks.</li>
+                </ul>
+
+                <h3>General Rule</h3>
+                <ul>
+                    <li>Keep snacks small (100–200 kcal).</li>
+                    <li>Focus on fiber, protein, or healthy fats.</li>
+                    <li>Minimize added sugar and excess salt.</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2023 - CarePulse | Integrated Healthcare System
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        const mealData = {
+            diabetic: {
+                chart: [45, 35, 20],
+                meals: [
+                    {
+                        title: "Breakfast - 450 kcal",
+                        img: "https://via.placeholder.com/80x80/43cea2/ffffff?text=Oats",
+                        items: ["Oats (50g)", "Low-fat milk (200ml)", "1 Boiled egg"]
+                    },
+                    {
+                        title: "Lunch - 600 kcal",
+                        img: "https://via.placeholder.com/80x80/185a9d/ffffff?text=Chicken",
+                        items: ["Grilled chicken (100g)", "Quinoa (60g)", "Steamed vegetables"]
+                    },
+                    {
+                        title: "Dinner - 500 kcal",
+                        img: "https://via.placeholder.com/80x80/fd79a8/ffffff?text=Yogurt",
+                        items: ["Lentil soup (1 cup)", "Whole wheat toast", "Greek yogurt (100g)"]
+                    }
+                ]
+            },
+            hypertension: {
+                chart: [50, 30, 20],
+                meals: [
+                    {
+                        title: "Breakfast - 400 kcal",
+                        img: "https://via.placeholder.com/80x80/43cea2/ffffff?text=Bread",
+                        items: ["Whole grain bread 70g", "Low-sodium cheese 30g", "Cucumber slices 100g"]
+                    },
+                    {
+                        title: "Lunch - 550 kcal",
+                        img: "https://via.placeholder.com/80x80/185a9d/ffffff?text=Turkey",
+                        items: ["Grilled turkey 120g", "Brown rice 80g", "Steamed spinach 150g"]
+                    },
+                    {
+                        title: "Dinner - 450 kcal",
+                        img: "https://via.placeholder.com/80x80/fd79a8/ffffff?text=Potato",
+                        items: ["Vegetable soup 250g", "Sweet potato 150g", "Low-fat yogurt 100g"]
+                    }
+                ]
+            },
+            cholesterol: {
+                chart: [55, 25, 20],
+                meals: [
+                    {
+                        title: "Breakfast - 420 kcal",
+                        img: "https://via.placeholder.com/80x80/43cea2/ffffff?text=Oats",
+                        items: ["Oatmeal 50g", "Almond milk 200g", "Blueberries 50g"]
+                    },
+                    {
+                        title: "Lunch - 600 kcal",
+                        img: "https://via.placeholder.com/80x80/185a9d/ffffff?text=Salmon",
+                        items: ["Grilled salmon 120g", "Wild rice 70g", "Broccoli 100g"]
+                    },
+                    {
+                        title: "Dinner - 480 kcal",
+                        img: "https://via.placeholder.com/80x80/fd79a8/ffffff?text=Salad",
+                        items: ["Hummus 100g", "Whole wheat pita 60g", "Salad 100g"]
+                    }
+                ]
+            },
+            wellness: {
+                chart: [50, 30, 20],
+                meals: [
+                    {
+                        title: "Breakfast - 450 kcal",
+                        img: "https://via.placeholder.com/80x80/43cea2/ffffff?text=Eggs",
+                        items: ["Scrambled eggs 100g", "Whole grain toast 60g", "Tomatoes 100g"]
+                    },
+                    {
+                        title: "Lunch - 600 kcal",
+                        img: "https://via.placeholder.com/80x80/185a9d/ffffff?text=Chicken",
+                        items: ["Chicken breast 150g", "Mashed potatoes 200g", "Carrots 100g"]
+                    },
+                    {
+                        title: "Dinner - 500 kcal",
+                        img: "https://via.placeholder.com/80x80/fd79a8/ffffff?text=Veggies",
+                        items: ["Vegetable stir-fry 200g", "Brown rice 150g", "Low-fat milk 200ml"]
+                    }
+                ]
+            }
+        };
+
+        function showMeals(condition) {
+            const container = document.getElementById("mealsContainer");
+            const chartSection = document.getElementById("chartSection");
+            const data = mealData[condition];
+
+            container.innerHTML = "";
+            container.style.display = "flex";
+
+            data.meals.forEach(meal => {
+                const mealDiv = document.createElement("div");
+                mealDiv.className = "meal-card";
+                mealDiv.innerHTML = `
+                    <img src="${meal.img}" alt="Meal Image">
+                    <h3>${meal.title}</h3>
+                    <ul>${meal.items.map(item => `<li>${item}</li>`).join("")}</ul>
+                `;
+                container.appendChild(mealDiv);
+            });
+
+            chartSection.style.display = "block";
+
+            const ctx = document.getElementById('nutritionChart').getContext('2d');
+            if (window.myChart) window.myChart.destroy();
+            window.myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Carbohydrates', 'Protein', 'Fats'],
+                    datasets: [{
+                        label: 'Nutrition Breakdown',
+                        data: data.chart,
+                        backgroundColor: [
+                            'rgba(66, 165, 245, 0.7)',
+                            'rgba(102, 187, 106, 0.7)',
+                            'rgba(255, 202, 40, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgba(66, 165, 245, 1)',
+                            'rgba(102, 187, 106, 1)',
+                            'rgba(255, 202, 40, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Handle Enter key press
+        document.getElementById('userInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Scroll to nutrition section when clicking the nav link
+        document.getElementById('nutritionLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('.glass-container').scrollIntoView({
+                behavior: 'smooth'
+            });
+        });
+
+        // Initialize toastr
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-left",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut",
+            "rtl": true,
+            "tapToDismiss": false,
+            "toastClass": "toast-medical"
+        };
+    </script>
+</body>
+</html>
