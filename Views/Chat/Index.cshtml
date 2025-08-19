@@ -1,204 +1,386 @@
-﻿@using System.Security.Claims
-@model Care_Pulse.Models.User
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
 @{
-    ViewData["Title"] = "المحادثة";
-    Layout = "_Layout";
+}
+@{
+    ViewData["Title"] = "Chat with Doctor";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
-    .simple-chat-container {
-        max-width: 600px;
-        margin: 20px auto;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        overflow: hidden;
-        font-family: 'Tajawal', sans-serif;
-        direction: rtl;
-    }
-
-    .chat-header {
-        background-color: #4a6fa5;
-        color: white;
-        padding: 15px;
-        text-align: center;
-    }
-
-    .messages-container {
-        height: 400px;
-        overflow-y: auto;
-        padding: 15px;
-        background-color: #f9f9f9;
-    }
-
-    .message {
-        margin-bottom: 15px;
-        padding: 10px 15px;
-        border-radius: 8px;
-        max-width: 80%;
-    }
-
-        .message.sent {
-            background-color: #e3f2fd;
-            margin-left: auto;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Doctor Chat - Cure Pulse</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .message.received {
-            background-color: #f1f1f1;
-            margin-right: auto;
+        /* فقاعات متحركة بالخلفية */
+        .bubbles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
         }
 
-    .message-text {
-        word-wrap: break-word;
-    }
+            .bubbles span {
+                position: absolute;
+                display: block;
+                background: rgba(255,255,255,0.3);
+                border-radius: 50%;
+                animation: bubble 20s linear infinite;
+                bottom: -150px;
+            }
 
-    .message-time {
-        font-size: 0.8em;
-        color: #666;
-        margin-top: 5px;
-        text-align: left;
-    }
+                .bubbles span:nth-child(1) {
+                    left: 10%;
+                    width: 40px;
+                    height: 40px;
+                    animation-delay: 0s;
+                }
 
-    .message-input {
-        display: flex;
-        padding: 15px;
-        background-color: white;
-        border-top: 1px solid #ddd;
-    }
+                .bubbles span:nth-child(2) {
+                    left: 20%;
+                    width: 20px;
+                    height: 20px;
+                    animation-delay: 2s;
+                    animation-duration: 15s;
+                }
 
-        .message-input input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-left: 10px;
-        }
+                .bubbles span:nth-child(3) {
+                    left: 70%;
+                    width: 60px;
+                    height: 60px;
+                    animation-delay: 4s;
+                }
 
-        .message-input button {
-            padding: 10px 20px;
-            background-color: #4a6fa5;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+                .bubbles span:nth-child(4) {
+                    left: 50%;
+                    width: 30px;
+                    height: 30px;
+                    animation-delay: 6s;
+                    animation-duration: 12s;
+                }
 
-    @@media (max-width: 768px) {
-        .simple-chat-container {
-            margin: 10px;
-            height: calc(100vh - 20px);
-        }
+                .bubbles span:nth-child(5) {
+                    left: 85%;
+                    width: 50px;
+                    height: 50px;
+                    animation-delay: 8s;
+                }
 
-        .messages-container {
-            height: calc(100vh - 150px);
-        }
-    }
-</style>
+        @@keyframes bubble {
+            0% {
+                transform: translateY(0) scale(1);
+            }
 
-<div class="simple-chat-container">
-    <div class="chat-header">
-        <h3>محادثة مع @Model.Name</h3>
-    </div>
-
-    <div class="messages-container" id="messagesContainer">
-        <!-- الرسائل ستظهر هنا تلقائيا -->
-    </div>
-
-    <div class="message-input">
-        <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا..." />
-        <button id="sendButton">إرسال</button>
-    </div>
-</div>
-
-@section Scripts {
-    <script type="module">
-        // استيراد مكتبات Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
-        import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
-
-        // تكوين Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyCgrn9MIAa3J6TL-KW_gWbmMw3hz_qL7t0",
-            authDomain: "doctor-chat-app-5df92.firebaseapp.com",
-            databaseURL: "https://doctor-chat-app-5df92-default-rtdb.firebaseio.com",
-            projectId: "doctor-chat-app-5df92",
-            storageBucket: "doctor-chat-app-5df92.appspot.com",
-            messagingSenderId: "319942931151",
-            appId: "1:319942931151:web:92ce7433148765adf63dba",
-            measurementId: "G-R5PMNV2LB3"
-        };
-
-        // تهيئة Firebase
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-
-        // الحصول على ID المستخدمين
-        const currentUserId = "@User.FindFirst(ClaimTypes.NameIdentifier)?.Value";
-        const otherUserId = "@Model.Id";
-
-        // إنشاء معرف محادثة فريد (ترتيب الأرقام للتأكد من أنه نفس الـ ID لكلا المستخدمين)
-        const chatId = currentUserId < otherUserId ?
-            `${currentUserId}_${otherUserId}` :
-            `${otherUserId}_${currentUserId}`;
-
-        // إرسال رسالة
-        function sendMessage() {
-            const input = document.getElementById('messageInput');
-            const messageText = input.value.trim();
-
-            if (messageText) {
-                push(ref(database, `chats/${chatId}/messages`), {
-                    text: messageText,
-                    senderId: currentUserId,
-                    timestamp: Date.now()
-                });
-                input.value = '';
-                input.focus();
+            100% {
+                transform: translateY(-1000px) scale(0.5);
             }
         }
 
-        // عرض الرسالة في الواجهة
-        function displayMessage(message) {
-            const container = document.getElementById('messagesContainer');
-            const isCurrentUser = message.senderId === currentUserId;
-
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
-
-            messageDiv.innerHTML = `
-                <div class="message-text">${message.text}</div>
-                <div class="message-time">${formatTime(message.timestamp)}</div>
-            `;
-
-            container.appendChild(messageDiv);
-            container.scrollTop = container.scrollHeight;
+        .chat-container {
+            width: 420px;
+            height: 620px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            animation: fadeIn 1s ease forwards;
         }
 
-        // تنسيق الوقت
-        function formatTime(timestamp) {
-            const date = new Date(timestamp);
-            return date.toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true
-            });
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
 
-        // مستمعي الأحداث
-        document.getElementById('sendButton').addEventListener('click', sendMessage);
-        document.getElementById('messageInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
+        .chat-header {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-weight: bold;
+            font-size: 20px;
+            color: #003366;
+            border-bottom: 1px solid #ffffff40;
+        }
 
-        // الاستماع للرسائل الجديدة
-        onChildAdded(ref(database, `chats/${chatId}/messages`), (snapshot) => {
-            displayMessage(snapshot.val());
-        });
+            .chat-header .logo {
+                height: 100px;
+                animation: logoIn 1s ease;
+            }
 
-        // رسالة ترحيبية عند بدء المحادثة
-        displayMessage({
-            text: "لقد بدأت محادثة جديدة مع " + "@Model.Name",
-            senderId: currentUserId,
-            timestamp: Date.now()
-        });
+        @@keyframes logoIn {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #00ff00;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #00ff00;
+        }
+
+        .chat-box {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            animation: slideIn 0.4s ease forwards;
+        }
+
+        .user {
+            align-self: flex-end;
+            background: #0077cc;
+            color: white;
+            border-bottom-right-radius: 0;
+            flex-direction: row-reverse;
+        }
+
+        .doctor {
+            align-self: flex-start;
+            background: #f9f9f9;
+            color: #003366;
+            border-bottom-left-radius: 0;
+        }
+
+        .message img {
+            width: 28px;
+            height: 28px;
+        }
+
+        .input-box {
+            display: flex;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.3);
+            border-top: 1px solid #ffffff40;
+        }
+
+            .input-box input {
+                flex: 1;
+                padding: 12px;
+                border: none;
+                border-radius: 10px;
+                outline: none;
+                font-size: 15px;
+            }
+
+            .input-box button {
+                background: linear-gradient(45deg, #0077cc, #00aaff);
+                color: white;
+                border: none;
+                padding: 10px 16px;
+                margin-left: 10px;
+                border-radius: 10px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: 0.3s;
+            }
+
+                .input-box button:hover {
+                    transform: scale(1.05);
+                    background: linear-gradient(45deg, #005fa3, #0099cc);
+                }
+
+        @@keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- فقاعات الخلفية -->
+    <div class="bubbles">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <img src="~/images/logo.png" alt="Care Pulse Logo" class="logo">
+            Doctor Chat <div class="status-dot"></div>
+        </div>
+        <div class="chat-box" id="chatBox">
+            <div class="message user">
+                <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="User" />
+                Hello!
+            </div>
+            <div class="message doctor">
+                <img src="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" alt="Doctor" />
+                Hello! How can I help you today? What symptoms are you experiencing?
+            </div>
+        </div>
+        <div class="input-box">
+            <input type="text" id="userInput" placeholder="Type your message..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- صوت التنبيه -->
+    <audio id="notifySound" src="https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3"></audio>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatBox = document.getElementById('chatBox');
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="User" /> ${message}`;
+            chatBox.appendChild(userMsg);
+
+            input.value = '';
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            setTimeout(() => {
+                const doctorMsg = document.createElement('div');
+                doctorMsg.className = 'message doctor';
+                doctorMsg.innerHTML = `<img src="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" alt="Doctor" /> ${autoReply(message)}`;
+                chatBox.appendChild(doctorMsg);
+                document.getElementById('notifySound').play();
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 1200);
+        }
+
+        function autoReply(message) {
+            message = message.toLowerCase();
+
+            const replies = {
+                greeting: [
+                    "Hello! How can I help you today? What symptoms are you experiencing?",
+                    "Hi there! Please tell me how you're feeling.",
+                    "Hey! What can I assist you with today?"
+                ],
+                headache: [
+                    "It might be due to stress or dehydration. Try resting and drinking water.",
+                    "Headaches can be tricky—make sure to stay hydrated and get enough rest.",
+                    "If your headache persists, consider consulting a physician."
+                ],
+                fever: [
+                    "Make sure to monitor your temperature and stay hydrated. Do you have chills or cough as well?",
+                    "Fever can be a sign of infection. Are you experiencing any other symptoms?",
+                    "Please rest and drink plenty of fluids. If fever is high, seek medical advice."
+                ],
+                diabetes: [
+                    "Please monitor your blood sugar levels and follow your diet plan strictly.",
+                    "Managing your sugar levels is important. Have you checked your latest readings?",
+                    "Remember to take your medication and follow your doctor's instructions."
+                ],
+                medicine: [
+                    "I can suggest proper treatment after understanding all your symptoms.",
+                    "Please describe your symptoms so I can advise on treatment options.",
+                    "Always consult your doctor before starting or stopping any medication."
+                ],
+                cough: [
+                    "Do you have a dry or productive cough? Any other symptoms like fever or shortness of breath?",
+                    "Try to rest and stay hydrated. If cough worsens, see a doctor.",
+                    "Coughing can be caused by many things. Please monitor your symptoms carefully."
+                ],
+                fatigue: [
+                    "Feeling tired can be a symptom of many conditions. Are you sleeping well?",
+                    "Make sure to get enough rest and eat balanced meals.",
+                    "If fatigue persists, it’s best to consult your healthcare provider."
+                ],
+                nausea: [
+                    "Nausea can be uncomfortable. Have you eaten anything unusual recently?",
+                    "Try to stay hydrated and rest. If nausea continues, see a doctor.",
+                    "Let me know if you have any other symptoms like vomiting or dizziness."
+                ],
+                default: [
+                    "Thank you for sharing. Can you describe your symptoms in more detail?",
+                    "I'm here to help. Could you please provide more information?",
+                    "Please tell me more about how you are feeling."
+                ]
+            };
+
+            function randomReply(category) {
+                const options = replies[category];
+                return options[Math.floor(Math.random() * options.length)];
+            }
+
+            if (message.includes("hello") || message.includes("hi")) {
+                return randomReply("greeting");
+            } else if (message.includes("headache") || message.includes("migraine")) {
+                return randomReply("headache");
+            } else if (message.includes("fever")) {
+                return randomReply("fever");
+            } else if (message.includes("diabetes") || message.includes("sugar")) {
+                return randomReply("diabetes");
+            } else if (message.includes("medicine") || message.includes("treatment")) {
+                return randomReply("medicine");
+            } else if (message.includes("cough")) {
+                return randomReply("cough");
+            } else if (message.includes("tired") || message.includes("fatigue")) {
+                return randomReply("fatigue");
+            } else if (message.includes("nausea") || message.includes("sick")) {
+                return randomReply("nausea");
+            } else {
+                return randomReply("default");
+            }
+        }
     </script>
-}
+</body>
+</html>

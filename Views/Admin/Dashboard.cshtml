@@ -156,6 +156,19 @@
                     font-size: 1.5rem;
                 }
         }
+
+        /* Animation fix */
+        @@keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 }
 
@@ -197,14 +210,21 @@
 
 @section Scripts {
     <script>
-        // You can add interactive scripts here
         document.addEventListener('DOMContentLoaded', function() {
-            // Animation effects when page loads
+            // Fixed animation code
             const statCards = document.querySelectorAll('.stat-card');
             statCards.forEach((card, index) => {
-                card.style.animation = `fadeInUp 0.5s ease ${index * 0.2}s forwards`;
-                card.style.opacity = '0';
+                // Apply animation directly without changing opacity
+                card.style.animation = `fadeInUp 0.5s ease ${index * 0.2}s both`;
             });
+
+            // Debugging: Check if elements are being modified
+            setInterval(() => {
+                console.log('Checking stat cards visibility...');
+                statCards.forEach(card => {
+                    console.log(card.style.display, card.style.visibility, card.style.opacity);
+                });
+            }, 3000);
         });
     </script>
 }

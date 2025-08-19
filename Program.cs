@@ -1,14 +1,13 @@
 using Care_Pulse.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.Cookies; // ??? ??? ?????
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Services
+
 builder.Services.AddDbContext<CarePulseContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ??? ??? ??????? ????????
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -23,20 +22,18 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Middleware
+
 app.UseStaticFiles();
 app.UseRouting();
 app.MapControllerRoute(
     name: "chat",
     pattern: "Chat/{action=Index}/{doctorId?}",
     defaults: new { controller = "Chat" });
-// ??? ??? ?????? ???????? ??????
-app.UseAuthentication(); // ??? UseAuthorization
+app.UseAuthentication(); 
 app.UseAuthorization();
 
 app.UseSession();
 
-// Routes
 app.MapControllerRoute(
     name: "admin",
     pattern: "Admin/{action=Dashboard}/{id?}",

@@ -23,5 +23,9 @@ namespace Care_Pulse.Controllers
         {
             return View();
         }
+        public IActionResult Nutrition()
+        {
+            return View();
+        }
     }
 }
