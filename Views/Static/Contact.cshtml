@@ -2,125 +2,242 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    ViewData["Title"] = "Contact Us";
-    Layout = "_Layout";
 }
-
-<div class="contact-page">
-    <div class="contact-hero text-center py-5 text-white">
-        <div class="container py-4">
-            <h1 class="display-4 mb-3"><i class="fas fa-envelope me-2"></i>Contact Us</h1>
-            <p class="lead mb-0">We're here to answer all your questions</p>
-        </div>
-    </div>
-
-    <div class="container py-5">
-        <div class="row">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Send Us a Message</h3>
-                        <form>
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email Address</label>
-                                <input type="email" class="form-control" id="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="subject" class="form-label">Subject</label>
-                                <input type="text" class="form-control" id="subject" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="message" class="form-label">Message</label>
-                                <textarea class="form-control" id="message" rows="5" required></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary px-4">Send Message</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-6">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body p-4">
-                        <h3 class="mb-4">Contact Information</h3>
-                        <div class="contact-info mb-4">
-                            <div class="d-flex align-items-start mb-3">
-                                <i class="fas fa-map-marker-alt text-primary me-3 mt-1"></i>
-                                <div>
-                                    <h5 class="mb-1">Address</h5>
-                                    <p class="mb-0">Riyadh, Saudi Arabia</p>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-start mb-3">
-                                <i class="fas fa-phone-alt text-primary me-3 mt-1"></i>
-                                <div>
-                                    <h5 class="mb-1">Phone</h5>
-                                    <p class="mb-0">+966 12 345 6789</p>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-start mb-3">
-                                <i class="fas fa-envelope text-primary me-3 mt-1"></i>
-                                <div>
-                                    <h5 class="mb-1">Email</h5>
-                                    <p class="mb-0">info@carepulse.com</p>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-start">
-                                <i class="fas fa-clock text-primary me-3 mt-1"></i>
-                                <div>
-                                    <h5 class="mb-1">Working Hours</h5>
-                                    <p class="mb-0">Sunday - Thursday: 8 AM - 5 PM</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="social-media mt-4">
-                            <h5 class="mb-3">Follow Us</h5>
-                            <div class="d-flex gap-3">
-                                <a href="#" class="social-icon"><i class="fab fa-twitter fa-2x"></i></a>
-                                <a href="#" class="social-icon"><i class="fab fa-facebook-f fa-2x"></i></a>
-                                <a href="#" class="social-icon"><i class="fab fa-instagram fa-2x"></i></a>
-                                <a href="#" class="social-icon"><i class="fab fa-linkedin-in fa-2x"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<style>
-    .contact-page {
-        min-height: calc(100vh - 150px);
-    }
-
-    .contact-hero {
-        background: linear-gradient(135deg, rgba(0, 184, 148, 0.9), rgba(9, 132, 227, 0.9));
-        margin-bottom: 3rem;
-        border-radius: 0 0 20px 20px;
-    }
-
-    .contact-info h5 {
-        color: var(--primary);
-        font-size: 1.1rem;
-    }
-
-    .social-icon {
-        color: var(--dark);
-        transition: color 0.3s;
-    }
-
-        .social-icon:hover {
-            color: var(--primary);
+@{
+    ViewData["Title"] = "Contact";
+    Layout = "_Layout"; 
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - CarePulse</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
         }
 
-    .form-control, .form-select {
-        border-radius: 8px;
-        padding: 0.5rem 1rem;
-    }
-</style>
+        body {
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-align: center;
+        }
+
+        .team-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+            .section-title:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 80px;
+                height: 3px;
+                background: linear-gradient(to right, #43cea2, #185a9d);
+                border-radius: 3px;
+            }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .team-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            }
+
+        .icon-wrapper {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            border-radius: 50%;
+            color: white;
+            font-size: 30px;
+        }
+
+        .team-card h3 {
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 1.4rem;
+        }
+
+        .role {
+            color: #43cea2;
+            font-weight: 500;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .description {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .supervisor-section {
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            border-radius: 15px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+            .supervisor-section .icon-wrapper {
+                background: rgba(255, 255, 255, 0.2);
+                border: 2px solid white;
+            }
+
+            .supervisor-section h3 {
+                color: white;
+            }
+
+            .supervisor-section .role {
+                color: rgba(255, 255, 255, 0.9);
+            }
+
+            .supervisor-section .description {
+                color: rgba(255, 255, 255, 0.8);
+            }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .heart {
+            color: #fd79a8;
+            margin: 0 5px;
+        }
+
+        @@media (max-width: 768px) {
+            .container
+
+        {
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+        }
+
+        .team-grid {
+            grid-template-columns: 1fr;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CarePulse Development Team</h1>
+
+        <div class="team-section">
+            <h2 class="section-title">Development Team</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-laptop-code"></i>
+                    </div>
+                    <h3>Noor Khaled Al.Rababah</h3>
+                    <p class="role">Frontend Developer</p>
+                    <p class="description">Specialized in creating responsive and user-friendly interfaces with modern web technologies.</p>
+                </div>
+
+                <div class="team-card">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <h3>Katya Awni Bisharat</h3>
+                    <p class="role">Backend Developer</p>
+                    <p class="description">Focused on server-side logic, database integration, and ensuring system reliability.</p>
+                </div>
+
+                <div class="team-card">
+                    <div class="icon-wrapper">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Ruba Mahmmad Khrasat</h3>
+                    <p class="role">Database Specialist</p>
+                    <p class="description">Expert in database design, optimization, and management for efficient data handling.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="supervisor-section">
+            <h2 class="section-title">Project Supervisor</h2>
+            <div class="team-card" style="background: transparent; box-shadow: none;">
+                <div class="icon-wrapper">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>Dr. Wafaa Khader Dababat</h3>
+                <p class="role">Project Supervisor</p>
+                <p class="description">Providing guidance, expertise, and support throughout the development process of CarePulse.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Made with <span class="heart"><i class="fas fa-heart"></i></span> by CarePulse Team</p>
+        </footer>
+    </div>
+</body>
+</html>

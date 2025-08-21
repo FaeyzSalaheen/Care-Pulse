@@ -1,0 +1,650 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Care Pulse - Vegan Weekly Nutrition Plan</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            color: #333;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .glass-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px 40px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            animation: fadeIn 1s ease forwards;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #073763;
+            font-weight: 700;
+            font-size: 2.6rem;
+            text-shadow: 0 0 6px #0ca;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: rgba(255,255,255,0.3);
+            border: none;
+            padding: 12px 22px;
+            margin: 5px 8px;
+            border-radius: 30px;
+            font-weight: 600;
+            color: #073763;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+            .tab-btn:hover {
+                background: #0ca8b7;
+                color: white;
+                box-shadow: 0 6px 14px rgba(12,168,183,0.7);
+            }
+
+            .tab-btn.active {
+                background: #0ca8b7;
+                color: white;
+                box-shadow: 0 8px 20px rgba(12,168,183,0.9);
+            }
+
+        .tab-content {
+            display: none;
+            animation: fadeInContent 0.7s ease forwards;
+        }
+
+            .tab-content.active {
+                display: block;
+            }
+
+        .meal-section {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .meal-card {
+            background: rgba(255,255,255,0.85);
+            border-radius: 18px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+            width: 320px;
+            padding: 22px;
+            transition: transform 0.3s ease;
+        }
+
+            .meal-card:hover {
+                transform: scale(1.05);
+                box-shadow: 0 10px 26px rgba(0,0,0,0.18);
+            }
+
+            .meal-card img {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-bottom: 12px;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                box-shadow: 0 4px 12px rgba(12,168,183,0.6);
+                background-color: #f0f0f0;
+            }
+
+            .meal-card h3 {
+                text-align: center;
+                margin-bottom: 10px;
+                color: #03415a;
+                font-weight: 700;
+                font-size: 1.2rem;
+            }
+
+            .meal-card ul {
+                list-style: inside disc;
+                color: #555;
+                font-weight: 600;
+                font-size: 0.95rem;
+            }
+
+        .chart-wrapper {
+            max-width: 480px;
+            margin: 40px auto 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 24px 20px;
+            border-radius: 20px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+            .chart-wrapper h2 {
+                margin-bottom: 18px;
+                color: #03415a;
+                font-weight: 700;
+            }
+
+        canvas {
+            max-width: 280px !important;
+            max-height: 280px !important;
+            margin: 0 auto;
+        }
+
+        .steps-section {
+            margin-top: 25px;
+            text-align: center;
+            color: #03415a;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        @@keyframes fadeIn {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        @@keyframes fadeInContent {
+            from
+
+        {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+
+        }
+
+        @@media (max-width:720px) {
+            .meal-section
+
+        {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .meal-card {
+            width: 90%;
+        }
+
+        .tabs {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tab-btn {
+            width: 80%;
+            margin: 5px 0;
+        }
+
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+            display: block;
+            margin: 0 auto 20px;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .day-title {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-container">
+        <div style="text-align:center; margin-bottom:20px;">
+            <img src="/Imagess/Logo.jpg" alt="Care Pulse Logo" class="logo" onerror="this.style.display='none'">
+        </div>
+
+        <h1>Vegan Weekly Nutrition Plan</h1>
+
+        <div class="tabs">
+            <button class="tab-btn active" aria-controls="day6">Saturday</button>
+            <button class="tab-btn" aria-controls="day0">Sunday</button>
+            <button class="tab-btn" aria-controls="day1">Monday</button>
+            <button class="tab-btn" aria-controls="day2">Tuesday</button>
+            <button class="tab-btn" aria-controls="day3">Wednesday</button>
+            <button class="tab-btn" aria-controls="day4">Thursday</button>
+            <button class="tab-btn" aria-controls="day5">Friday</button>
+        </div>
+
+        <!-- Saturday -->
+        <section id="day6" class="tab-content active">
+            <h3 class="day-title">Saturday</h3>
+            <div class="meal-section">
+                <article class="meal-card">
+                    <img src="/Imagess/moz.jpg" alt="Vegan breakfast" onerror="handleImageError(this, 'Breakfast')">
+                    <h3>Breakfast - 440 kcal</h3>
+                    <ul>
+                        <li>Scrambled tofu 150g</li>
+                        <li>Whole wheat toast 60g</li>
+                        <li>Orange juice 150ml</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/grilledvegi.jpg" alt="Vegan lunch" onerror="handleImageError(this, 'Lunch')">
+                    <h3>Lunch - 610 kcal</h3>
+                    <ul>
+                        <li>Grilled veggie wrap 100g</li>
+                        <li>Quinoa 150g</li>
+                        <li>Avocado slices 70g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/s.jpg" alt="Vegan dinner" onerror="handleImageError(this, 'Dinner')">
+                    <h3>Dinner - 520 kcal</h3>
+                    <ul>
+                        <li>Lentil soup 300g</li>
+                        <li>Whole wheat bread 80g</li>
+                        <li>Salad 200g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/carrr.jpg" alt="Vegan snack" onerror="handleImageError(this, 'Snack')">
+                    <h3>Snack - 160 kcal</h3>
+                    <ul>
+                        <li>Almonds 20g</li>
+                        <li>Carrot sticks 100g</li>
+                    </ul>
+                </article>
+            </div>
+            <div class="chart-wrapper">
+                <h2>Nutrition Breakdown</h2>
+                <canvas id="chart-day6"></canvas>
+                <div class="steps-section">Daily Steps Goal: 8500 steps</div>
+            </div>
+        </section>
+
+        <!-- Sunday -->
+        <section id="day0" class="tab-content">
+            <h3 class="day-title">Sunday</h3>
+            <div class="meal-section">
+                <article class="meal-card">
+                    <img src="/Imagess/pancc.jpg" alt="Vegan breakfast" onerror="handleImageError(this, 'Breakfast')">
+                    <h3>Breakfast - 430 kcal</h3>
+                    <ul>
+                        <li>Vegan pancakes 120g</li>
+                        <li>Blueberries 100g</li>
+                        <li>Maple syrup 40g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/tufu.jpg" alt="Vegan lunch" onerror="handleImageError(this, 'Lunch')">
+                    <h3>Lunch - 600 kcal</h3>
+                    <ul>
+                        <li>Tofu salad 150g</li>
+                        <li>Brown rice 150g</li>
+                        <li>Steamed veggies 200g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/Vegan curry.jpg" alt="Vegan dinner" onerror="handleImageError(this, 'Dinner')">
+                    <h3>Dinner - 510 kcal</h3>
+                    <ul>
+                        <li>Vegan curry 200g</li>
+                        <li>Quinoa 150g</li>
+                        <li>Spinach salad 100g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/mn.jpg" alt="Snack" onerror="handleImageError(this, 'Snack')">
+                    <h3>Snack - 150 kcal</h3>
+                    <ul>
+                        <li>Mixed nuts 15g</li>
+                        <li>Apple slices 80g</li>
+                    </ul>
+                </article>
+            </div>
+            <div class="chart-wrapper">
+                <h2>Nutrition Breakdown</h2>
+                <canvas id="chart-day0"></canvas>
+                <div class="steps-section">Daily Steps Goal: 8300 steps</div>
+            </div>
+        </section>
+
+        <!-- Monday -->
+        <section id="day1" class="tab-content">
+            <h3 class="day-title">Monday</h3>
+            <div class="meal-section">
+                <article class="meal-card">
+                    <img src="/Imagess/Oatmeal with berries.jpg" alt="Vegan breakfast" onerror="handleImageError(this, 'Breakfast')">
+                    <h3>Breakfast - 450 kcal</h3>
+                    <ul>
+                        <li>Oatmeal with berries 100g</li>
+                        <li>Almond milk 200ml</li>
+                        <li>Banana 100g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/chickpea salad.jpg" alt="Vegan lunch" onerror="handleImageError(this, 'Lunch')">
+                    <h3>Lunch - 600 kcal</h3>
+                    <ul>
+                        <li>Chickpea salad 150g</li>
+                        <li>Whole wheat pita 60g</li>
+                        <li>Mixed greens 80g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/Steamed broccoli.jpg" alt="Vegan dinner" onerror="handleImageError(this, 'Dinner')">
+                    <h3>Dinner - 500 kcal</h3>
+                    <ul>
+                        <li>Lentil soup 200g</li>
+                        <li>Brown rice 100g</li>
+                        <li>Steamed broccoli 100g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/mn.jpg" alt="Vegan snack" onerror="handleImageError(this, 'Snack')">
+                    <h3>Snack - 170 kcal</h3>
+                    <ul>
+                        <li>Trail mix 30g</li>
+                        <li>Orange slices 100g</li>
+                    </ul>
+                </article>
+            </div>
+            <div class="chart-wrapper">
+                <h2>Nutrition Breakdown</h2>
+                <canvas id="chart-day1"></canvas>
+                <div class="steps-section">Daily Steps Goal: 8000 steps</div>
+            </div>
+        </section>
+
+        <!-- Tuesday -->
+        <section id="day2" class="tab-content">
+            <h3 class="day-title">Tuesday</h3>
+            <div class="meal-section">
+                <article class="meal-card">
+                    <img src="/Imagess/Smoothie bowl.jpg" alt="Vegan breakfast" onerror="handleImageError(this, 'Breakfast')">
+                    <h3>Breakfast - 410 kcal</h3>
+                    <ul>
+                        <li>Smoothie bowl 200g</li>
+                        <li>Strawberries 70g</li>
+                        <li>Granola 40g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/tufu.jpg" alt="Vegan lunch" onerror="handleImageError(this, 'Lunch')">
+                    <h3>Lunch - 590 kcal</h3>
+                    <ul>
+                        <li>Tofu stir-fry 150g</li>
+                        <li>Brown rice 100g</li>
+                        <li>Mixed veggies 150g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/Spinach salad.jpg" alt="Vegan dinner" onerror="handleImageError(this, 'Dinner')">
+                    <h3>Dinner - 520 kcal</h3>
+                    <ul>
+                        <li>Lentil stew 200g</li>
+                        <li>Quinoa 80g</li>
+                        <li>Spinach salad 150g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/mn.jpg" alt="Vegan snack" onerror="handleImageError(this, 'Snack')">
+                    <h3>Snack - 170 kcal</h3>
+                    <ul>
+                        <li>Trail mix 25g</li>
+                        <li>Apple slices 100g</li>
+                    </ul>
+                </article>
+            </div>
+            <div class="chart-wrapper">
+                <h2>Nutrition Breakdown</h2>
+                <canvas id="chart-day2"></canvas>
+                <div class="steps-section">Daily Steps Goal: 8500 steps</div>
+            </div>
+        </section>
+
+        <!-- Wednesday -->
+        <section id="day3" class="tab-content">
+            <h3 class="day-title">Wednesday</h3>
+            <div class="meal-section">
+                <article class="meal-card">
+                    <img src="/Imagess/Avocado toast.jpg" alt="Vegan breakfast" onerror="handleImageError(this, 'Breakfast')">
+                    <h3>Breakfast - 430 kcal</h3>
+                    <ul>
+                        <li>Avocado toast 2pcs+50g Avoca</li>
+                        <li>Tomatoes 50g</li>
+                        <li>Sprouts 30g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/veganburger.jpg" alt="Vegan lunch" onerror="handleImageError(this, 'Lunch')">
+                    <h3>Lunch - 600 kcal</h3>
+                    <ul>
+                        <li>Vegan burger 120g</li>
+                        <li>Sweet potato fries 150g</li>
+                        <li>Green salad 80g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/steamed broccoli.jpg" alt="Vegan dinner" onerror="handleImageError(this, 'Dinner')">
+                    <h3>Dinner - 510 kcal</h3>
+                    <ul>
+                        <li>Stuffed eggplant 200g</li>
+                        <li>Brown rice 70g</li>
+                        <li>Steamed broccoli 105g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/mn.jpg" alt="Mn" onerror="handleImageError(this, 'Snack')">
+                    <h3>Snack - 160 kcal</h3>
+                    <ul>
+                        <li>Celery sticks 100g</li>
+                        <li>Almond butter 20g</li>
+                    </ul>
+                </article>
+            </div>
+            <div class="chart-wrapper">
+                <h2>Nutrition Breakdown</h2>
+                <canvas id="chart-day3"></canvas>
+                <div class="steps-section">Daily Steps Goal: 8300 steps</div>
+            </div>
+        </section>
+
+        <!-- Thursday -->
+        <section id="day4" class="tab-content">
+            <h3 class="day-title">Thursday</h3>
+            <div class="meal-section">
+                <article class="meal-card">
+                    <img src="/Imagess/Chia pudding.jpg" alt="Vegan breakfast" onerror="handleImageError(this, 'Breakfast')">
+                    <h3>Breakfast - 420 kcal</h3>
+                    <ul>
+                        <li>Chia pudding 235g</li>
+                        <li>Blueberries 100g</li>
+                        <li>Walnuts20g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/Fresh veggies.jpg" alt="Vegan lunch" onerror="handleImageError(this, 'Lunch')">
+                    <h3>Lunch - 580 kcal</h3>
+                    <ul>
+                        <li>Vegan wrap 90g</li>
+                        <li>Hummus 120g</li>
+                        <li>Fresh veggies 250g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/SALAD.jpg" alt="Vegan dinner" onerror="handleImageError(this, 'Dinner')">
+                    <h3>Dinner - 500 kcal</h3>
+                    <ul>
+                        <li>Vegan soup 300g</li>
+                        <li>Whole wheat bread 80g</li>
+                        <li>Salad 100g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/mn.jpg" alt="Vegan snack" onerror="handleImageError(this, 'Snack')">
+                    <h3>Snack - 150 kcal</h3>
+                    <ul>
+                        <li>Mixed nuts 25g</li>
+                        <li>Fruit 100g</li>
+                    </ul>
+                </article>
+            </div>
+            <div class="chart-wrapper">
+                <h2>Nutrition Breakdown</h2>
+                <canvas id="chart-day4"></canvas>
+                <div class="steps-section">Daily Steps Goal: 8000 steps</div>
+            </div>
+        </section>
+
+        <!-- Friday -->
+        <section id="day5" class="tab-content">
+            <h3 class="day-title">Friday</h3>
+            <div class="meal-section">
+                <article class="meal-card">
+                    <img src="/Imagess/greek.jpg" alt="Vegan breakfast" onerror="handleImageError(this, 'Breakfast')">
+                    <h3>Breakfast - 440 kcal</h3>
+                    <ul>
+                        <li>Oatmeal 100g</li>
+                        <li>Banana 80g</li>
+                        <li>Almond milk 150ml</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/green_salad.jpg" alt="Vegan lunch" onerror="handleImageError(this, 'Lunch')">
+                    <h3>Lunch - 610 kcal</h3>
+                    <ul>
+                        <li>Vegan salad 150g</li>
+                        <li>Quinoa 150g</li>
+                        <li>Chickpeas 100g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/tufu.jpg" alt="Vegan dinner" onerror="handleImageError(this, 'Dinner')">
+                    <h3>Dinner - 520 kcal</h3>
+                    <ul>
+                        <li>Steamed veggies 200g</li>
+                        <li>Brown rice 150g</li>
+                        <li>Tofu 100g</li>
+                    </ul>
+                </article>
+                <article class="meal-card">
+                    <img src="/Imagess/mn.jpg" alt="Vegan snack" onerror="handleImageError(this, 'Snack')">
+                    <h3>Snack - 160 kcal</h3>
+                    <ul>
+                        <li>Almonds 20g</li>
+                        <li>Apple 80g</li>
+                    </ul>
+                </article>
+            </div>
+            <div class="chart-wrapper">
+                <h2>Nutrition Breakdown</h2>
+                <canvas id="chart-day5"></canvas>
+                <div class="steps-section">Daily Steps Goal: 8400 steps</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // دالة لمعالجة أخطاء الصور
+        function handleImageError(img, mealType) {
+            // إنشاء صورة بديلة باستخدام SVG
+            const color = '#43cea2';
+            const text = mealType;
+
+            img.src = `data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2280%22 height%3D%2280%22 viewBox%3D%220 0 80 80%22%3E%3Ccircle cx%3D%2240%22 cy%3D%2240%22 r%3D%2238%22 fill%3D%22${encodeURIComponent(color)}%22%2F%3E%3Ctext x%3D%2240%22 y%3D%2245%22 text-anchor%3D%22middle%22 font-family%3D%22Arial%22 font-size%3D%2212%22 fill%3D%22white%22%3E${encodeURIComponent(text)}%3C%2Ftext%3E%3C%2Fsvg%3E`;
+            img.onerror = null; // منع التكرار
+        }
+
+        // بيانات السعرات لكل يوم: [Carbs, Protein, Fat, Fiber]
+        const macroData = {
+            day6: [50,20,20,10],
+            day0: [45,25,20,10],
+            day1: [48,22,20,10],
+            day2: [46,24,20,10],
+            day3: [47,23,20,10],
+            day4: [44,26,20,10],
+            day5: [45,25,20,10]
+        };
+
+        // Tab functionality + إنشاء Pie Chart عند الظهور
+        const tabs = document.querySelectorAll('.tab-btn');
+        const contents = document.querySelectorAll('.tab-content');
+        let charts = {}; // لتخزين كل التشارتات
+
+        function createChart(id, data){
+            const ctx = document.getElementById(id).getContext('2d');
+            charts[id] = new Chart(ctx,{
+                type:'pie',
+                data:{
+                    labels:['Carbs','Protein','Fat','Fiber'],
+                    datasets:[{
+                        label:'Nutrition',
+                        data:data,
+                        backgroundColor:['#0ca8b7','#073763','#43cea2','#f5b700'],
+                        borderWidth:1
+                    }]
+                },
+                options:{
+                    responsive:true,
+                    plugins:{
+                        legend:{
+                            position:'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // إنشاء تشارت اليوم الأول عند التحميل
+        createChart('chart-day6', macroData['day6']);
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', ()=>{
+                tabs.forEach(b=>b.classList.remove('active'));
+                tab.classList.add('active');
+                const id = tab.getAttribute('aria-controls');
+                contents.forEach(c=>c.classList.remove('active'));
+                document.getElementById(id).classList.add('active');
+
+                // إنشاء التشارت إذا لم يتم إنشاؤه مسبقاً
+                if(!charts['chart-'+id]){
+                    createChart('chart-'+id, macroData[id]);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

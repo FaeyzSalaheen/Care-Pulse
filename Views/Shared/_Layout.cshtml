@@ -280,7 +280,22 @@
                         <i class="fas fa-comments"></i>
                         <span class="link-text">Chat with Doctor</span>
                     </a>
-
+                    <a class="nav-link" asp-controller="Static" asp-action="Nutrition">
+                        <i class="fas fa-apple-alt"></i>
+                        <span class="link-text">Nutrition</span>
+                    </a>
+                    <a class="nav-link" asp-controller="Static" asp-action="WaterTracker">
+                        <i class="fas fa-tint"></i>
+                        <span class="link-text">Water Tracker</span>
+                    </a>
+                    <a class="nav-link" asp-controller="Static" asp-action="VEGAN">
+                        <i class="fas fa-leaf"></i>
+                        <span class="link-text">Vegan Nutrition</span>
+                    </a>
+                    <a class="nav-link" asp-controller="Static" asp-action="GENERALWELLNESSS">
+                        <i class="fas fa-heart"></i>
+                        <span class="link-text">General Wellness</span>
+                    </a>
 
                     <a class="nav-link" asp-controller="Content" asp-action="ViewPosts">
                         <i class="fas fa-newspaper"></i>
@@ -292,7 +307,7 @@
                     </a>
                     <a class="nav-link" asp-controller="Account" asp-action="Profile">
                         <i class="fas fa-user-circle"></i>
-                        <span class="link-text">الملف الشخصي</span>
+                        <span class="link-text">Profile</span>
                     </a>
 
                     <a class="nav-link" asp-controller="Static" asp-action="Index">
@@ -335,6 +350,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+        // تهيئة Toastr مع الخيارات
         toastr.options = {
             "closeButton": true,
             "debug": false,
@@ -356,6 +372,7 @@
             "toastClass": "toast-medical"
         };
 
+        // دالة لعرض الإشعارات
         function showMedicalToast(type, message, title) {
             switch (type) {
                 case 'success':
@@ -373,6 +390,8 @@
             }
         }
 
+        // تسجيل معلومات الجلسة للتصحيح (يمكن إزالتها في الإنتاج)
+        document.addEventListener('DOMContentLoaded', function() {
             console.log('Session Info:', {
                 userId: '@Context.Session.GetInt32("UserId")',
                 userRole: '@Context.Session.GetInt32("UserRole")',
@@ -382,6 +401,7 @@
     </script>
 
     <script type="module">
+        // استيراد وتهيئة Firebase
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js';
         import { getDatabase } from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js';
         import { getAuth } from 'https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js';
@@ -397,13 +417,19 @@
             measurementId: "G-R5PMNV2LB3"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const database = getDatabase(app);
-        const auth = getAuth(app);
+        try {
+            const app = initializeApp(firebaseConfig);
+            const database = getDatabase(app);
+            const auth = getAuth(app);
 
-        window.firebaseApp = app;
-        window.firebaseDatabase = database;
-        window.firebaseAuth = auth;
+            window.firebaseApp = app;
+            window.firebaseDatabase = database;
+            window.firebaseAuth = auth;
+            
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+        }
     </script>
 
     @RenderSection("Scripts", required: false)

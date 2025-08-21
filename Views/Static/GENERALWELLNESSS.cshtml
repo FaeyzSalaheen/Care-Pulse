@@ -1,0 +1,427 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Care Pulse - Weekly Nutrition Plan</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            color: #333;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .glass-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px 40px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            animation: fadeIn 1s ease forwards;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #073763;
+            font-weight: 700;
+            font-size: 2.6rem;
+            text-shadow: 0 0 6px #0ca;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            padding: 12px 22px;
+            margin: 5px 8px;
+            border-radius: 30px;
+            font-weight: 600;
+            color: #073763;
+            cursor: pointer;
+            transition: background 0.3s, color 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+            .tab-btn:hover {
+                background: #0ca8b7;
+                color: white;
+                box-shadow: 0 6px 14px rgba(12,168,183,0.7);
+            }
+
+            .tab-btn.active {
+                background: #0ca8b7;
+                color: white;
+                box-shadow: 0 8px 20px rgba(12,168,183,0.9);
+            }
+
+        .tab-content {
+            display: none;
+            animation: fadeInContent 0.7s ease forwards;
+        }
+
+            .tab-content.active {
+                display: block;
+            }
+
+        .meal-section {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .meal-card {
+            background: rgba(255,255,255,0.85);
+            border-radius: 18px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+            width: 320px;
+            padding: 22px;
+            transition: transform 0.3s ease;
+        }
+
+            .meal-card:hover {
+                transform: scale(1.05);
+                box-shadow: 0 10px 26px rgba(0,0,0,0.18);
+            }
+
+            .meal-card img {
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin: 0 auto 12px auto;
+                display: block;
+                box-shadow: 0 4px 12px rgba(12,168,183,0.6);
+                background-color: #f0f0f0;
+            }
+
+            .meal-card h3 {
+                text-align: center;
+                margin-bottom: 10px;
+                color: #03415a;
+                font-weight: 700;
+                font-size: 1.2rem;
+            }
+
+            .meal-card ul {
+                list-style: inside disc;
+                color: #555;
+                font-weight: 600;
+                font-size: 0.95rem;
+            }
+
+        .chart-wrapper {
+            max-width: 480px;
+            margin: 40px auto 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 24px 20px;
+            border-radius: 20px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+
+            .chart-wrapper h2 {
+                margin-bottom: 18px;
+                color: #03415a;
+                font-weight: 700;
+            }
+
+        canvas {
+            max-width: 280px !important;
+            max-height: 280px !important;
+            margin: 0 auto;
+        }
+
+        .steps-section {
+            margin-top: 25px;
+            text-align: center;
+            color: #03415a;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+            display: block;
+            margin: 0 auto 20px;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .day-title {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        @@keyframes fadeIn {
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        @@keyframes fadeInContent {
+            from
+
+        {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+
+        }
+
+        @@media (max-width: 720px) {
+            .meal-section
+
+        {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .meal-card {
+            width: 90%;
+        }
+
+        .tabs {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .tab-btn {
+            width: 80%;
+            margin: 5px 0;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-container" role="main" aria-label="Weekly Nutrition Plan">
+        <div style="text-align:center; margin-bottom:20px;">
+            <img src="/Imagess/logo.png" alt="Care Pulse Logo" class="logo" onerror="this.style.display='none'">
+        </div>
+
+        <h1>General Wellness Weekly Nutrition Plan</h1>
+
+        <div class="tabs" role="tablist" aria-label="Days of the week navigation">
+            <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="day1" id="tab-day1">Saturday</button>
+            <button class="tab-btn" role="tab" aria-selected="false" aria-controls="day2" id="tab-day2">Sunday</button>
+            <button class="tab-btn" role="tab" aria-selected="false" aria-controls="day3" id="tab-day3">Monday</button>
+            <button class="tab-btn" role="tab" aria-selected="false" aria-controls="day4" id="tab-day4">Tuesday</button>
+            <button class="tab-btn" role="tab" aria-selected="false" aria-controls="day5" id="tab-day5">Wednesday</button>
+            <button class="tab-btn" role="tab" aria-selected="false" aria-controls="day6" id="tab-day6">Thursday</button>
+            <button class="tab-btn" role="tab" aria-selected="false" aria-controls="day7" id="tab-day7">Friday</button>
+        </div>
+
+        <script>
+            // دالة لمعالجة أخطاء الصور
+            function handleImageError(img, mealType) {
+                // إنشاء صورة بديلة باستخدام SVG
+                const color = '#43cea2';
+                const text = mealType;
+
+                img.src = `data:image/svg+xml;charset=utf-8,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2280%22 height%3D%2280%22 viewBox%3D%220 0 80 80%22%3E%3Ccircle cx%3D%2240%22 cy%3D%2240%22 r%3D%2238%22 fill%3D%22${encodeURIComponent(color)}%22%2F%3E%3Ctext x%3D%2240%22 y%3D%2245%22 text-anchor%3D%22middle%22 font-family%3D%22Arial%22 font-size%3D%2212%22 fill%3D%22white%22%3E${encodeURIComponent(text)}%3C%2Ftext%3E%3C%2Fsvg%3E`;
+                img.onerror = null; // منع التكرار
+            }
+
+            const days = {
+                day1: {
+                    meals: [
+                        {type:'Breakfast', kcal:450, img:'/Imagess/oat.jpg', items:['Oats (50g)','Low-fat milk (200ml)','Blueberries (50g)']},
+                        {type:'Lunch', kcal:600, img:'/Imagess/chicken.jpg', items:['Grilled chicken breast (120g)','Quinoa (70g)','Steamed broccoli & carrots']},
+                        {type:'Dinner', kcal:500, img:'/Imagess/greek.jpg', items:['Lentil soup (1 cup)','Whole wheat bread (1 slice)','Greek yogurt (100g)']},
+                        {type:'Snack', kcal:150, img:'/Imagess/almonds.jpg', items:['Almonds (20g)','Dried apricots (30g)']}
+                    ],
+                    steps:8000,
+                    chart:{carbs:50, protein:30, fats:20}
+                },
+                day2: {
+                    meals: [
+                        {type:'Breakfast', kcal:430, img:'/Imagess/greek.jpg', items:['Banana (100g)','Greek yogurt (150g)','Chia seeds (15g)']},
+                        {type:'Lunch', kcal:620, img:'/Imagess/salmon.jpg', items:['Baked salmon (120g)','Brown rice (70g)','Mixed steamed vegetables']},
+                        {type:'Dinner', kcal:520, img:'/Imagess/green_salad.jpg', items:['Tofu stir-fry (150g)','Quinoa (60g)','Green salad']},
+                        {type:'Snack', kcal:160, img:'/Imagess/hummus.jpg', items:['Carrot sticks (50g)','Hummus (30g)']}
+                    ],
+                    steps:8500,
+                    chart:{carbs:48, protein:32, fats:20}
+                },
+                day3: {
+                    meals: [
+                        {type:'Breakfast', kcal:460, img:'/Imagess/avocado.jpg', items:['Whole wheat toast (2 slices)','Avocado (70g)','Boiled egg (1)']},
+                        {type:'Lunch', kcal:610, img:'/Imagess/chicken.jpg', items:['Grilled chicken breast (130g)','Mixed greens salad','Olive oil dressing (1 tbsp)']},
+                        {type:'Dinner', kcal:530, img:'/Imagess/pasta.jpg', items:['Whole wheat pasta (70g)','Tomato and vegetable sauce','Parmesan cheese (10g)']},
+                        {type:'Snack', kcal:140, img:'/Imagess/apple_pb.jpg', items:['Apple slices (100g)','Peanut butter (15g)']}
+                    ],
+                    steps:9000,
+                    chart:{carbs:52, protein:28, fats:20}
+                },
+                day4: {
+                    meals: [
+                        {type:'Breakfast', kcal:440, img:'/Imagess/fruit_salad.jpg', items:['Mixed fruit salad (200g)','Low-fat yogurt (150g)','Granola (30g)']},
+                        {type:'Lunch', kcal:620, img:'/Imagess/salad.jpg', items:['Whole wheat bread (2 slices)','Turkey breast (120g)','Lettuce and tomato']},
+                        {type:'Dinner', kcal:510, img:'/Imagess/sweet_potato.jpg', items:['Grilled fish (130g)','Sweet potato (100g)','Steamed broccoli']},
+                        {type:'Snack', kcal:150, img:'/Imagess/mixed_nuts.jpg', items:['Mixed nuts (25g)','Raisins (20g)']}
+                    ],
+                    steps:8200,
+                    chart:{carbs:49, protein:31, fats:20}
+                },
+                day5: {
+                    meals: [
+                        {type:'Breakfast', kcal:450, img:'/Imagess/oat.jpg', items:['Oatmeal (50g)','Strawberries (50g)','Skim milk (200ml)']},
+                        {type:'Lunch', kcal:630, img:'/Imagess/chicken.jpg', items:['Grilled chicken (130g)','Quinoa (70g)','Steamed vegetables']},
+                        {type:'Dinner', kcal:520, img:'/Imagess/salad.jpg', items:['Vegetable soup (1 cup)','Whole wheat bread (1 slice)','Greek yogurt (100g)']},
+                        {type:'Snack', kcal:160, img:'/Imagess/hummus.jpg', items:['Cucumber sticks (50g)','Hummus (30g)']}
+                    ],
+                    steps:8000,
+                    chart:{carbs:51, protein:29, fats:20}
+                },
+                day6: {
+                    meals: [
+                        {type:'Breakfast', kcal:460, img:'/Imagess/greek.jpg', items:['Greek yogurt (150g)','Banana (100g)','Almonds (15g)']},
+                        {type:'Lunch', kcal:610, img:'/Imagess/salmon.jpg', items:['Baked salmon (120g)','Brown rice (70g)','Steamed vegetables']},
+                        {type:'Dinner', kcal:530, img:'/Imagess/pasta.jpg', items:['Whole wheat pasta (70g)','Vegetable sauce','Parmesan (10g)']},
+                        {type:'Snack', kcal:150, img:'/Imagess/dried apricots.jpg', items:['Almonds (20g)','Dried apricots (30g)']}
+                    ],
+                    steps:8500,
+                    chart:{carbs:50, protein:30, fats:20}
+                },
+                day7: {
+                    meals: [
+                        {type:'Breakfast', kcal:450, img:'/Imagess/Avocado.jpg', items:['Whole wheat toast (2 slices)','Avocado (70g)','Boiled egg (1)']},
+                        {type:'Lunch', kcal:620, img:'/Imagess/chicken.jpg', items:['Grilled chicken (130g)','Quinoa (70g)','Steamed vegetables']},
+                        {type:'Dinner', kcal:510, img:'/Imagess/sweet_potato.jpg', items:['Grilled fish (130g)','Sweet potato (100g)','Green salad']},
+                        {type:'Snack', kcal:160, img:'/Imagess/apple_pb.jpg', items:['Apple slices (100g)','Peanut butter (15g)']}
+                    ],
+                    steps:8800,
+                    chart:{carbs:50, protein:30, fats:20}
+                }
+            };
+
+            const tabs = document.querySelectorAll('.tab-btn');
+            const container = document.querySelector('.glass-container');
+
+            // إنشاء أقسام الأيام
+            Object.keys(days).forEach((day, index) => {
+                const section = document.createElement('section');
+                section.id = day;
+                section.className = 'tab-content' + (index === 0 ? ' active' : '');
+                section.setAttribute('role','tabpanel');
+                section.setAttribute('aria-labelledby','tab-'+day);
+
+                const dayNames = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+                let html = `<h3 class="day-title">${dayNames[index]}</h3><div class="meal-section">`;
+                days[day].meals.forEach(meal => {
+                    html += `<article class="meal-card" aria-label="${dayNames[index]} ${meal.type} meal">
+                        <img src="${meal.img}" alt="${meal.type}" onerror="handleImageError(this, '${meal.type}')" />
+                        <h3>${meal.type} - ${meal.kcal} kcal</h3>
+                        <ul>` + meal.items.map(i => `<li>${i}</li>`).join('') + `</ul></article>`;
+                });
+                html += `</div>
+                    <div class="chart-wrapper" aria-label="Nutrition breakdown for ${dayNames[index]}">
+                        <h2>Nutrition Breakdown</h2>
+                        <canvas id="chart-${day}"></canvas>
+                        <div class="steps-section">Daily Steps Goal: ${days[day].steps} steps</div>
+                    </div>`;
+                section.innerHTML = html;
+                container.appendChild(section);
+            });
+
+            function createChart(ctx, data) {
+                return new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Carbohydrates', 'Protein', 'Fats'],
+                        datasets: [{
+                            data: [data.carbs, data.protein, data.fats],
+                            backgroundColor: ['rgba(54,162,235,0.7)', 'rgba(75,192,192,0.7)', 'rgba(255,206,86,0.7)'],
+                            borderColor: ['rgba(54,162,235,1)', 'rgba(75,192,192,1)', 'rgba(255,206,86,1)'],
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        },
+                        animation: {
+                            duration: 900
+                        },
+                        layout: {
+                            padding: 10
+                        }
+                    }
+                });
+            }
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => {
+                        t.classList.remove('active');
+                        t.setAttribute('aria-selected', 'false');
+                    });
+
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+                    tab.classList.add('active');
+                    tab.setAttribute('aria-selected', 'true');
+
+                    const targetId = tab.getAttribute('aria-controls');
+                    const content = document.getElementById(targetId);
+                    content.classList.add('active');
+
+                    const canvas = document.getElementById(`chart-${targetId}`);
+                    if (!canvas.dataset.rendered) {
+                        const ctx = canvas.getContext('2d');
+                        createChart(ctx, days[targetId].chart);
+                        canvas.dataset.rendered = "true";
+                    }
+                });
+            });
+
+            // رسم أول مخطط عند تحميل الصفحة
+            const firstDayId = 'day1';
+            const firstCanvas = document.getElementById(`chart-${firstDayId}`);
+            if (firstCanvas) {
+                const ctx = firstCanvas.getContext('2d');
+                createChart(ctx, days[firstDayId].chart);
+                firstCanvas.dataset.rendered = "true";
+            }
+        </script>
+    </div>
+</body>
+</html>
