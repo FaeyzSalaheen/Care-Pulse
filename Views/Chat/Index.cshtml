@@ -15,26 +15,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Doctor Chat - Cure Pulse</title>
     <style>
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
+        }
+
+        body {
             font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(to right, #43cea2, #185a9d);
             color: #333;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
+            padding: 20px;
+            overflow-x: hidden;
         }
 
         /* فقاعات متحركة بالخلفية */
         .bubbles {
-            position: absolute;
+            position: fixed;
             width: 100%;
             height: 100%;
             overflow: hidden;
             z-index: -1;
+            top: 0;
+            left: 0;
         }
 
             .bubbles span {
@@ -84,18 +91,31 @@
                 }
 
         @@keyframes bubble {
-            0% {
-                transform: translateY(0) scale(1);
-            }
+            0%
 
-            100% {
-                transform: translateY(-1000px) scale(0.5);
-            }
+        {
+            transform: translateY(0) scale(1);
+        }
+
+        100% {
+            transform: translateY(-1000px) scale(0.5);
+        }
+
+        }
+
+        .page-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-height: 100vh;
         }
 
         .chat-container {
             width: 420px;
+            max-width: 95%;
             height: 620px;
+            max-height: 90vh;
             background: rgba(255, 255, 255, 0.25);
             border-radius: 20px;
             backdrop-filter: blur(20px);
@@ -105,18 +125,22 @@
             overflow: hidden;
             position: relative;
             animation: fadeIn 1s ease forwards;
+            margin: 0 auto;
         }
 
         @@keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
+            from
 
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+        {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+
         }
 
         .chat-header {
@@ -130,23 +154,28 @@
             font-size: 20px;
             color: #003366;
             border-bottom: 1px solid #ffffff40;
+            flex-shrink: 0;
         }
 
             .chat-header .logo {
-                height: 100px;
+                height: 40px;
+                width: auto;
                 animation: logoIn 1s ease;
             }
 
         @@keyframes logoIn {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
+            from
 
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
         }
 
         .status-dot {
@@ -196,6 +225,7 @@
         .message img {
             width: 28px;
             height: 28px;
+            flex-shrink: 0;
         }
 
         .input-box {
@@ -203,49 +233,113 @@
             padding: 12px;
             background: rgba(255, 255, 255, 0.3);
             border-top: 1px solid #ffffff40;
+            flex-direction: column;
+            flex-shrink: 0;
         }
 
-            .input-box input {
-                flex: 1;
-                padding: 12px;
-                border: none;
-                border-radius: 10px;
-                outline: none;
-                font-size: 15px;
+        .input-row {
+            display: flex;
+            width: 100%;
+        }
+
+        .input-box input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .input-box button {
+            background: linear-gradient(45deg, #0077cc, #00aaff);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            margin-left: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            flex-shrink: 0;
+        }
+
+            .input-box button:hover {
+                transform: scale(1.05);
+                background: linear-gradient(45deg, #005fa3, #0099cc);
             }
 
-            .input-box button {
-                background: linear-gradient(45deg, #0077cc, #00aaff);
-                color: white;
-                border: none;
-                padding: 10px 16px;
-                margin-left: 10px;
-                border-radius: 10px;
-                cursor: pointer;
-                font-weight: bold;
-                transition: 0.3s;
-            }
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            justify-content: flex-start;
+        }
 
-                .input-box button:hover {
-                    transform: scale(1.05);
-                    background: linear-gradient(45deg, #005fa3, #0099cc);
-                }
+        .suggestion-chip {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 119, 204, 0.3);
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+            .suggestion-chip:hover {
+                background: rgba(0, 119, 204, 0.2);
+                transform: translateY(-2px);
+            }
 
         @@keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(15px);
+            from
+
+        {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        }
+
+        /* تحسينات للجوال */
+        @@media (max-width: 480px) {
+            .chat-container {
+                width: 100%;
+                height: 85vh;
+                max-width: 100%;
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
+            .chat-header {
+                font-size: 18px;
+                padding: 12px;
             }
+
+            .message {
+                max-width: 85%;
+            }
+
+            .suggestions {
+                justify-content: center;
+            }
+
+            .input-box {
+                padding: 10px;
+            }
+
+                .input-box button {
+                    padding: 10px 12px;
+                }
         }
     </style>
 </head>
 <body>
-
     <!-- فقاعات الخلفية -->
     <div class="bubbles">
         <span></span>
@@ -255,24 +349,36 @@
         <span></span>
     </div>
 
-    <div class="chat-container">
-        <div class="chat-header">
-            <img src="~/images/logo.png" alt="Care Pulse Logo" class="logo">
-            Doctor Chat <div class="status-dot"></div>
-        </div>
-        <div class="chat-box" id="chatBox">
-            <div class="message user">
-                <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="User" />
-                Hello!
+    <div class="page-container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <img src="https://cdn-icons-png.flaticon.com/512/3710/3710278.png" alt="Care Pulse Logo" class="logo">
+                Doctor Chat <div class="status-dot"></div>
             </div>
-            <div class="message doctor">
-                <img src="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" alt="Doctor" />
-                Hello! How can I help you today? What symptoms are you experiencing?
+            <div class="chat-box" id="chatBox">
+                <div class="message user">
+                    <img src="https://cdn-icons-png.flaticon.com/512/1077/1077012.png" alt="User" />
+                    Hello!
+                </div>
+                <div class="message doctor">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3209/3209265.png" alt="Doctor" />
+                    Hello! How can I help you today? What symptoms are you experiencing?
+                </div>
             </div>
-        </div>
-        <div class="input-box">
-            <input type="text" id="userInput" placeholder="Type your message..." />
-            <button onclick="sendMessage()">Send</button>
+            <div class="input-box">
+                <div class="input-row">
+                    <input type="text" id="userInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)" />
+                    <button onclick="sendMessage()">Send</button>
+                </div>
+                <div class="suggestions" id="suggestions">
+                    <div class="suggestion-chip" onclick="useSuggestion('I have a headache')">Headache</div>
+                    <div class="suggestion-chip" onclick="useSuggestion('I have fever')">Fever</div>
+                    <div class="suggestion-chip" onclick="useSuggestion('I feel nauseous')">Nausea</div>
+                    <div class="suggestion-chip" onclick="useSuggestion('I have a cough')">Cough</div>
+                    <div class="suggestion-chip" onclick="useSuggestion('I feel tired')">Fatigue</div>
+                    <div class="suggestion-chip" onclick="useSuggestion('My sugar levels are high')">Diabetes</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -280,6 +386,7 @@
     <audio id="notifySound" src="https://assets.mixkit.co/sfx/preview/mixkit-message-pop-alert-2354.mp3"></audio>
 
     <script>
+        // دالة لإرسال الرسالة
         function sendMessage() {
             const input = document.getElementById('userInput');
             const message = input.value.trim();
@@ -305,6 +412,7 @@
             }, 1200);
         }
 
+        // دالة للرد التلقائي بناءً على محتوى الرسالة
         function autoReply(message) {
             message = message.toLowerCase();
 
@@ -381,6 +489,26 @@
                 return randomReply("default");
             }
         }
+
+        // دالة لاستخدام الاقتراحات
+        function useSuggestion(suggestion) {
+            document.getElementById('userInput').value = suggestion;
+            sendMessage();
+        }
+
+        // دالة للتعامل مع الضغط على مفتاح Enter
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // التأكد من أن الشات في المنتصف عند تحميل الصفحة
+        window.addEventListener('load', function() {
+            document.querySelector('.page-container').scrollIntoView({
+                behavior: 'auto'
+            });
+        });
     </script>
 </body>
 </html>
