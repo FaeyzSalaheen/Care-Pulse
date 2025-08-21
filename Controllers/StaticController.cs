@@ -27,5 +27,22 @@ namespace Care_Pulse.Controllers
         {
             return View();
         }
+        public IActionResult WaterTracker()
+        {
+            return View();
+        }
+        public IActionResult VEGAN()
+        {
+            return View();
+        }
+        public IActionResult GENERALWELLNESSS()
+        {
+            return View();
+        }
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
     }
 }

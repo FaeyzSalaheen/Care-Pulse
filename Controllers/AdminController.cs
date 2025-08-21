@@ -44,12 +44,12 @@ namespace Care_Pulse.Controllers
                 var userId = HttpContext.Session.GetInt32("UserId");
                 if (!userId.HasValue)
                 {
-                    return Unauthorized(new { success = false, message = "يجب تسجيل الدخول أولاً" });
+                    return Unauthorized(new { success = false, message = "Please log in first" });
                 }
 
                 string fileUrl = null;
 
-                
+                // Handle file upload
                 if (request.ImageFile != null && request.ImageFile.Length > 0)
                 {
                     var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
@@ -89,7 +89,7 @@ namespace Care_Pulse.Controllers
                 return Ok(new
                 {
                     success = true,
-                    message = "تم إنشاء المنشور بنجاح",
+                    message = "Post created successfully",
                     postId = newPost.Id,
                     fileUrl = fileUrl
                 });
@@ -99,25 +99,19 @@ namespace Care_Pulse.Controllers
                 return StatusCode(500, new
                 {
                     success = false,
-                    message = "حدث خطأ أثناء إنشاء المنشور",
+                    message = "An error occurred while creating the post",
                     error = ex.Message
                 });
             }
         }
 
-       
+        // Post request model
         public class PostRequest
         {
             public string Title { get; set; }
             public string Description { get; set; }
-            public IFormFile? ImageFile { get; set; } 
+            public IFormFile? ImageFile { get; set; }
             public string? FileUrl { get; set; }
         }
-
-
-
-
-
     }
 }
-    

@@ -1,0 +1,291 @@
+﻿@{
+    ViewData["Title"] = "Water Tracker";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Care Pulse - Water Tracker & Tips</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(to right, #43cea2, #185a9d);
+            color: #333;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .glass-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 30px 40px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            animation: fadeIn 1s ease forwards;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            width: 150px;
+            height: auto;
+            display: block;
+            margin: 0 auto 20px;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        h1 {
+            text-align: center;
+            color: #073763;
+            font-size: 2.4rem;
+            text-shadow: 0 0 6px #0ca;
+            margin-bottom: 25px;
+        }
+
+        h2 {
+            color: #03415a;
+            margin-top: 20px;
+        }
+
+        p {
+            color: #03415a;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .water-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+            .water-buttons button {
+                background: #0ca8b7;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                margin: 0 10px;
+                border-radius: 12px;
+                cursor: pointer;
+                font-weight: 600;
+                transition: 0.3s;
+                box-shadow: 0 4px 10px rgba(12,168,183,0.6);
+            }
+
+                .water-buttons button:hover {
+                    background: #073763;
+                    box-shadow: 0 6px 14px rgba(7,55,99,0.8);
+                }
+
+        #waterProgress {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        #waterText {
+            text-align: center;
+            font-weight: bold;
+            margin-top: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* Motivation text */
+        #motivationText {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ff8c00, #ff3cac, #1e90ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            opacity: 0;
+        }
+
+        @@keyframes fadeInMotivation {
+            0% {
+                opacity: 0;
+                transform: translateY(-15px) scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Celebration text */
+        #celebrationText {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 2px 2px 12px rgba(0,0,0,0.5);
+            display: none;
+            text-align: center;
+            z-index: 9999;
+        }
+
+        @@media(max-width:720px) {
+            .glass-container {
+                padding: 20px;
+            }
+
+            .water-buttons button {
+                margin: 5px;
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-container" role="main" aria-label="Water Tracker & Tips">
+        <!-- تم تعديل مسار الصورة لاستخدام مجلد wwwroot/Imagess -->
+        <img src="/Imagess/Logo.jpg" alt="Care Pulse Logo" class="logo">
+
+        <h1>💧 Healthy Tips & Water Tracker</h1>
+
+        <h2>Water Intake Tips</h2>
+        <p>Drinking enough water daily helps your body stay hydrated, improves digestion, and keeps your skin healthy. Aim for at least 8 glasses (200ml each) per day.</p>
+
+        <h2>Vegetable & Fruit Tips</h2>
+        <p>Include a variety of vegetables and fruits in every meal. Leafy greens, colorful peppers, berries, and citrus fruits provide essential vitamins and antioxidants.</p>
+        <p>Snacks can be raw veggies, fruit slices, or a small handful of nuts. Avoid processed snacks high in sugar or salt.</p>
+
+        <h2>💧 Daily Water Tracker</h2>
+        <div class="water-buttons">
+            <button id="addGlass">+ Add Glass</button>
+            <button id="resetWater">Reset</button>
+        </div>
+
+        <div id="waterProgress">
+            <canvas id="waterChart"></canvas>
+        </div>
+        <p id="waterText">0 / 8 glasses</p>
+        <div id="motivationText"></div>
+    </div>
+
+    <!-- Celebration Text -->
+    <div id="celebrationText">Your Body is Healthy & Hydrated! 💧🎉</div>
+
+    <script>
+        let totalGlasses = 8;
+        let currentGlasses = 0;
+
+        const ctx = document.getElementById('waterChart').getContext('2d');
+        let waterChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Consumed', 'Remaining'],
+                datasets: [{
+                    data: [0, totalGlasses],
+                    backgroundColor: ['rgba(54, 162, 235, 0.7)', 'rgba(200,200,200,0.3)'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: '70%',
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                animation: {
+                    animateRotate: true,
+                    duration: 800
+                }
+            }
+        });
+
+        function updateChart() {
+            waterChart.data.datasets[0].data = [currentGlasses, totalGlasses - currentGlasses];
+            waterChart.update();
+            document.getElementById('waterText').textContent = `${currentGlasses} / ${totalGlasses} glasses`;
+        }
+
+        // Motivational quotes
+        const motivationalQuotes = [
+            "Great job! Keep it up 💪",
+            "You're doing amazing! 🌟",
+            "Hydration is key! 💧",
+            "Stay strong and healthy! 🏋️‍♂️",
+            "Every glass counts! 👍",
+            "Keep going! Your body thanks you! 😊"
+        ];
+
+        // Sounds
+        const glassSound = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
+        const celebrationSound = new Audio('https://actions.google.com/sounds/v1/alarms/bugle_tune.ogg');
+
+        glassSound.load();
+        celebrationSound.load();
+
+        document.getElementById('addGlass').addEventListener('click', () => {
+            if (currentGlasses < totalGlasses) currentGlasses++;
+            updateChart();
+
+            // Show motivational quote
+            const quote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+            const motivationEl = document.getElementById('motivationText');
+            motivationEl.textContent = quote;
+            motivationEl.style.animation = 'none';
+            motivationEl.offsetHeight;
+            motivationEl.style.animation = 'fadeInMotivation 0.8s forwards';
+
+            if (currentGlasses === totalGlasses) {
+                celebrationSound.currentTime = 0;
+                celebrationSound.play().catch(e => console.log("Celebration sound error:", e));
+
+                const celebration = document.getElementById('celebrationText');
+                celebration.style.display = 'block';
+
+                // Confetti effect
+                confetti({
+                    particleCount: 200,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+
+                // Hide text after 5 seconds
+                setTimeout(() => {
+                    celebration.style.display = 'none';
+                }, 5000);
+            } else {
+                glassSound.currentTime = 0;
+                glassSound.play().catch(e => console.log("Sound play error:", e));
+            }
+        });
+
+        document.getElementById('resetWater').addEventListener('click', () => {
+            currentGlasses = 0;
+            updateChart();
+            document.getElementById('motivationText').textContent = '';
+        });
+    </script>
+</body>
+</html>
